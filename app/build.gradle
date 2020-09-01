@@ -12,8 +12,18 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            //release打开混淆
+            minifyEnabled true
+            shrinkResources true
+            //release版本不开启log
+            buildConfigField("boolean","LOG_DEBUG","false")
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 }
@@ -29,4 +39,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation files('libs/TingPhoneOpenSDK_7.2.6.jar')
+    implementation files('libs/XmDownload_2.0.jar')
+    implementation files('libs/XmlyOAuth2SDK_V2.0.jar')
+    compile 'com.google.code.gson:gson:2.8.2'
+    implementation("com.squareup.okhttp3:okhttp:4.8.1")
+    implementation("com.squareup.okio:okio:1.8.0")
 }
