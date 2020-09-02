@@ -19,6 +19,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginBottom="60dp"
         android:overScrollMode="never"/>
+    <!--android:overScrollMode="never" 滑动到边框时不会出现颜色边-->
 
 
 </RelativeLayout>

@@ -2,35 +2,26 @@ package com.cvte.ximalaya;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.cvte.ximalaya.adapters.IndicatorAdapter;
 import com.cvte.ximalaya.adapters.MainContentAdapter;
 import com.cvte.ximalaya.utils.LogUtil;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
-import com.ximalaya.ting.android.opensdk.model.category.Category;
-import com.ximalaya.ting.android.opensdk.model.category.CategoryList;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends FragmentActivity {
 
@@ -38,6 +29,7 @@ public class MainActivity extends FragmentActivity {
     private static final int sPermissionRequestCode = 1;
     private MagicIndicator mMagicIndicator;
     private ViewPager mViewPager;
+    private IndicatorAdapter mIndicatorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +43,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         initView();
+        initEvent();
 //        Map<String,String> map = new HashMap<String,String>();
 //        CommonRequest.getCategories(map, new IDataCallBack<CategoryList>() {
 //            @Override
@@ -73,6 +66,19 @@ public class MainActivity extends FragmentActivity {
 //        });
     }
 
+    private void initEvent() {
+        /*设置Indicator的监听器 */
+        mIndicatorAdapter.setOnIndicatorTabClickListener(new IndicatorAdapter.OnIndicatorTabClickListener() {
+            @Override
+            public void onTabClick(int index) {
+                LogUtil.d(TAG,"IndicatorAdapter Listener click index "+index);
+                if (mViewPager != null) {
+                    mViewPager.setCurrentItem(index);
+                }
+            }
+        });
+    }
+
     private void initView() {
         //viewPager
         mViewPager = this.findViewById(R.id.view_pager);
@@ -89,9 +95,9 @@ public class MainActivity extends FragmentActivity {
         mMagicIndicator = this.findViewById(R.id.main_indicator);
         mMagicIndicator.setBackgroundColor(this.getResources().getColor(R.color.colorBackgroundRed));
         //创建indicator的适配器
-        IndicatorAdapter adapter = new IndicatorAdapter(this);
+        mIndicatorAdapter = new IndicatorAdapter(this);
         CommonNavigator commonNavigator = new CommonNavigator(this);
-        commonNavigator.setAdapter(adapter);
+        commonNavigator.setAdapter(mIndicatorAdapter);
 
 
         mMagicIndicator.setNavigator(commonNavigator);
