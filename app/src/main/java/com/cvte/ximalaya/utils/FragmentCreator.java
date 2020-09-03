@@ -23,6 +23,7 @@ public class FragmentCreator {
     private static Map<Integer, BaseFragment> sCache = new HashMap<>();
 
     public static BaseFragment getFragment(int index){
+        LogUtil.d(TAG,"getFragment index--> " + index);
         BaseFragment baseFragment = sCache.get(index);
         if(baseFragment != null){
             return baseFragment;
