@@ -28,6 +28,7 @@ public class BaseApplication extends Application{
             mXimalaya.init(this ,mAppSecret);
         }
 
+        //开发时时 这里选择true,将log开放
         LogUtil.init(this.getPackageName(), true);
     }
 }
