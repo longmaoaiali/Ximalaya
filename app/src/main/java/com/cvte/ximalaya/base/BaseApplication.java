@@ -1,6 +1,7 @@
 package com.cvte.ximalaya.base;
 
 import android.app.Application;
+import android.os.Handler;
 
 import com.cvte.ximalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
@@ -11,6 +12,9 @@ import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
  */
 
 public class BaseApplication extends Application{
+
+    private static Handler sHandler = null;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,5 +34,11 @@ public class BaseApplication extends Application{
 
         //开发时时 这里选择true,将log开放
         LogUtil.init(this.getPackageName(), true);
+        sHandler = new Handler();
     }
+
+    public static Handler getHandler() {
+        return sHandler;
+    }
+
 }

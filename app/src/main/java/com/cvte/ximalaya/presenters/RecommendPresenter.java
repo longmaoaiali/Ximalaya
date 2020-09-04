@@ -52,6 +52,7 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     private void getRecommendData() {
         LogUtil.d(TAG,"request Recommend Data");
+        updateLoadingPicture();
         //封装map参数，实现回调函数
         Map<String, String> map = new HashMap<String, String>();
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMAND_COUNT+"");
@@ -73,16 +74,41 @@ public class RecommendPresenter implements IRecommendPresenter {
             @Override
             public void onError(int i, String s) {
                 LogUtil.d(TAG,"errorCode --> "+i+" errorMsg -->"+s );
+                /*处理网络错误*/
+                handlerError(i,s);
             }
         });
     }
 
-    private void handlerRecommendResult(List<Album> albumList) {
-        //便利所有的注册对象，通知UI更新
+    private void handlerError(int i, String s) {
         if (mCallbacks != null) {
             for (IRecommendViewCallback callback : mCallbacks) {
-                callback.onRecommendListLoaded(albumList);
+                callback.onNetworkError();
             }
+        }
+    }
+
+    private void handlerRecommendResult(List<Album> albumList) {
+        //便利所有的注册对象，通知UI更新
+        if (albumList != null) {
+            if (albumList.size()==0) {
+                for (IRecommendViewCallback callback : mCallbacks) {
+                    //处理数据为空
+                    callback.onEmpty();
+                }
+            }else{
+                for (IRecommendViewCallback callback : mCallbacks) {
+                    callback.onRecommendListLoaded(albumList);
+                }
+            }
+
+        }
+    }
+
+    private void updateLoadingPicture(){
+        for (IRecommendViewCallback callback : mCallbacks) {
+            /*先在页面上加载一个loading 图片*/
+            callback.onLoading();
         }
     }
 

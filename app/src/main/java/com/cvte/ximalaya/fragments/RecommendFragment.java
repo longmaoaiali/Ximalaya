@@ -15,6 +15,7 @@ import com.cvte.ximalaya.interfaces.IRecommendViewCallback;
 import com.cvte.ximalaya.presenters.RecommendPresenter;
 import com.cvte.ximalaya.utils.Constants;
 import com.cvte.ximalaya.utils.LogUtil;
+import com.cvte.ximalaya.views.UILoader;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -38,13 +39,39 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     private RecyclerView mRecommendRv;
     private RecommendListAdapter mRecommendListAdapter;
     private RecommendPresenter mRecommendPresenter;
+    private UILoader mUiLoader;
 
     @Override
-    protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
+    protected View onSubViewLoaded(final LayoutInflater layoutInflater, ViewGroup container) {
         LogUtil.d(TAG,"RecommendFragment --> onSubViewLoaded");
+
+        mUiLoader = new UILoader(getContext()) {
+            @Override
+            protected View getSuccessView(ViewGroup container) {
+                return createSuccessView(layoutInflater,container);
+            }
+        };
+        /*使用XAMALAYA SDK拿数据 SDK 3.10.6 获取猜你喜欢专辑*/
+        /*view绘制里面请求远程数据可能会出现，后面在处理*/
+        //getRecommendData();
+        /*获取逻辑层的实例，注册回调，实现回调方法 调用逻辑层get数据的方法*/
+        mRecommendPresenter = RecommendPresenter.getInstance();
+        mRecommendPresenter.registerViewCallback(this);
+        mRecommendPresenter.getRecommendList();
+
+        if (mUiLoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup)mUiLoader.getParent()).removeView(mUiLoader);
+        }
+        //返回View
+        /*应该返回UiLoader，而不是mRootView 这里也是被坑了好久*/
+        return mUiLoader;
+        //return mRootView;
+
+    }
+
+    private View createSuccessView(LayoutInflater layoutInflater, ViewGroup container) {
         /*加载View*/
         mRootView = layoutInflater.inflate(R.layout.fragment_recommand,container,false);
-
         /*1.找到控件
         * 2,设置布局管理器 垂直方向
         * 3.创建适配器
@@ -69,17 +96,10 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         mRecommendListAdapter = new RecommendListAdapter();
         mRecommendRv.setAdapter(mRecommendListAdapter);
 
-        /*使用XAMALAYA SDK拿数据 SDK 3.10.6 获取猜你喜欢专辑*/
-        /*view绘制里面请求远程数据可能会出现，后面在处理*/
-        //getRecommendData();
-        /*获取逻辑层的实例，注册回调，实现回调方法 调用逻辑层get数据的方法*/
-        mRecommendPresenter = RecommendPresenter.getInstance();
-        mRecommendPresenter.registerViewCallback(this);
-        mRecommendPresenter.getRecommendList();
-
-        //返回View
         return mRootView;
     }
+
+
 
     //private void updateRecommendUI(List<Album> albumList) {}
 
@@ -87,7 +107,27 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     @Override
     public void onRecommendListLoaded(List<Album> result) {
         //当我们获取到推荐内容时，方法会被回调
+        LogUtil.d(TAG,"onRecommendListLoaded");
         mRecommendListAdapter.setData(result);
+        mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
+    }
+
+    @Override
+    public void onNetworkError() {
+        LogUtil.d(TAG,"onNetworkError");
+        mUiLoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
+    }
+
+    @Override
+    public void onEmpty() {
+        LogUtil.d(TAG,"onEmpty");
+        mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+    }
+
+    @Override
+    public void onLoading() {
+        LogUtil.d(TAG,"onLoading");
+        mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
     }
 
     @Override
