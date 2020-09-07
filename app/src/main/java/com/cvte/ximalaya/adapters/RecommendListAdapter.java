@@ -1,6 +1,7 @@
 package com.cvte.ximalaya.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cvte.ximalaya.R;
+import com.cvte.ximalaya.utils.LogUtil;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -21,7 +23,9 @@ import java.util.List;
  */
 
 public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdapter.InnerHolder> {
+    private static final String TAG = "RecommendListAdapter";
     private List<Album> mData = new ArrayList<>();
+    private OnRecommendItemClickListner mOnRecommendItemClickListner;
 
     @Override
     public InnerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -32,9 +36,20 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     }
 
     @Override
-    public void onBindViewHolder(InnerHolder holder, int position) {
+    public void onBindViewHolder(InnerHolder holder, final int position) {
         /*设置数据*/
         holder.itemView.setTag(position);
+        /*给每个Item设置监听器*/
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //LogUtil.d(TAG,"holder.itemView click--->"+position);
+                LogUtil.d(TAG,"holder.itemView click--->"+v.getTag());
+                if (mOnRecommendItemClickListner != null) {
+                    mOnRecommendItemClickListner.onItemClick((Integer) v.getTag());
+                }
+            }
+        });
         /*将请求到的数据设置到对应的item中*/
         holder.setData(mData.get(position));
     }
@@ -83,5 +98,14 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             Picasso.get().load(album.getCoverUrlLarge()).into(albumCoverIv);
 
         }
+    }
+    
+    public void setOnRecommendItemClickListner(OnRecommendItemClickListner listner)
+    {
+        this.mOnRecommendItemClickListner = listner;
+    }
+
+    public interface OnRecommendItemClickListner{
+        void onItemClick(int position);
     }
 }

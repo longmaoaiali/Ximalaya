@@ -1,5 +1,6 @@
 package com.cvte.ximalaya.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cvte.ximalaya.DetailActivity;
 import com.cvte.ximalaya.R;
 import com.cvte.ximalaya.adapters.RecommendListAdapter;
 import com.cvte.ximalaya.base.BaseFragment;
@@ -32,7 +34,7 @@ import java.util.Map;
  * Created by user on 2020/9/2.
  */
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, RecommendListAdapter.OnRecommendItemClickListner {
 
     private static final String TAG = "RecommendFragment";
     private View mRootView;
@@ -97,7 +99,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
 
         mRecommendListAdapter = new RecommendListAdapter();
         mRecommendRv.setAdapter(mRecommendListAdapter);
-
+        mRecommendListAdapter.setOnRecommendItemClickListner(this);
         return mRootView;
     }
 
@@ -157,5 +159,13 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         if (mRecommendPresenter != null) {
             mRecommendPresenter.getRecommendList();
         }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        //recyclerView item被点击了 20个Item,序号是0-19
+
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
     }
 }
