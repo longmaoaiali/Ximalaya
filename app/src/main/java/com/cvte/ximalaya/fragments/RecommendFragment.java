@@ -32,7 +32,7 @@ import java.util.Map;
  * Created by user on 2020/9/2.
  */
 
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener {
 
     private static final String TAG = "RecommendFragment";
     private View mRootView;
@@ -62,6 +62,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         if (mUiLoader.getParent() instanceof ViewGroup) {
             ((ViewGroup)mUiLoader.getParent()).removeView(mUiLoader);
         }
+
+        mUiLoader.setOnRetryClickListener(this);
         //返回View
         /*应该返回UiLoader，而不是mRootView 这里也是被坑了好久*/
         return mUiLoader;
@@ -146,6 +148,14 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //取消回调接口的注册
         if (mRecommendPresenter != null) {
             mRecommendPresenter.unRegisterViewCallback(this);
+        }
+    }
+
+    @Override
+    public void onRetryClick() {
+        //网络不佳，用户点击重试
+        if (mRecommendPresenter != null) {
+            mRecommendPresenter.getRecommendList();
         }
     }
 }

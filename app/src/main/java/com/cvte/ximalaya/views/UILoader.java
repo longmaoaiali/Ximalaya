@@ -29,6 +29,7 @@ import com.cvte.ximalaya.utils.LogUtil;
     private View mNetworkErrorView;
     private View mEmptyView;
     private static final String TAG="UILoader";
+    private OnRetryClickListener mOnRetryClickListener = null;
 
     public enum UIStatus{
         LOADING,SUCCESS,NETWORK_ERROR,EMPTY,NONE
@@ -126,7 +127,18 @@ import com.cvte.ximalaya.utils.LogUtil;
 
     private View getNetworkErrorView() {
         LogUtil.d(TAG,"getNetworkErrorView");
-        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_network_error,this,false);
+        View networkErrorView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_network_error,this,false);
+        networkErrorView.findViewById(R.id.network_error_icon).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //重新获取数据
+                if (mOnRetryClickListener != null) {
+                    mOnRetryClickListener.onRetryClick();
+                }
+            }
+        });
+
+        return networkErrorView;
     }
 
     /*成功的页面需要实际的数据，由子类去实现*/
@@ -134,6 +146,14 @@ import com.cvte.ximalaya.utils.LogUtil;
 
     private View getLoadingView() {
         return LayoutInflater.from(getContext()).inflate(R.layout.fragment_loading,this,false);
+    }
+
+    public void setOnRetryClickListener(OnRetryClickListener listener){
+        this.mOnRetryClickListener = listener;
+    }
+
+    public interface OnRetryClickListener{
+        void onRetryClick();
     }
 
 }
