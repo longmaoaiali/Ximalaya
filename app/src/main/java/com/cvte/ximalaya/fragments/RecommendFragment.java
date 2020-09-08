@@ -14,6 +14,7 @@ import com.cvte.ximalaya.R;
 import com.cvte.ximalaya.adapters.RecommendListAdapter;
 import com.cvte.ximalaya.base.BaseFragment;
 import com.cvte.ximalaya.interfaces.IRecommendViewCallback;
+import com.cvte.ximalaya.presenters.AlbumDetialPresenter;
 import com.cvte.ximalaya.presenters.RecommendPresenter;
 import com.cvte.ximalaya.utils.Constants;
 import com.cvte.ximalaya.utils.LogUtil;
@@ -162,9 +163,10 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(int position,Album album) {
         //recyclerView item被点击了 20个Item,序号是0-19
-
+        /*将专辑数据给到detail实现类*/
+        AlbumDetialPresenter.getInstance().setAlbumDetail(album);
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);
     }

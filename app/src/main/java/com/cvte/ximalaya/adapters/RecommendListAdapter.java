@@ -46,7 +46,8 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
                 //LogUtil.d(TAG,"holder.itemView click--->"+position);
                 LogUtil.d(TAG,"holder.itemView click--->"+v.getTag());
                 if (mOnRecommendItemClickListner != null) {
-                    mOnRecommendItemClickListner.onItemClick((Integer) v.getTag());
+                    int cliclPosition = (Integer) v.getTag();
+                    mOnRecommendItemClickListner.onItemClick(cliclPosition,mData.get(cliclPosition));
                 }
             }
         });
@@ -106,6 +107,8 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     }
 
     public interface OnRecommendItemClickListner{
-        void onItemClick(int position);
+        //void onItemClick(int position);
+
+        void onItemClick(int cliclPosition, Album album);
     }
 }
