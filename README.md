@@ -1,6 +1,7 @@
 # Ximalaya FM Android App 开发记录
 ## 参考资料  
   MagicIndicator https://github.com/hackware1993/MagicIndicator   
+  Gaussian Blur 毛玻璃效果 https://www.sunofbeach.net/a/1180054455828197376
   
 ## 开发日志
   2020:09:01 创建项目，初始化环境，集成XIMALAYA SDK和开源项目MagicIndicator  
