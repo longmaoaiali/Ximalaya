@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_album_item_bg">
+
+    <TextView
+        android:drawablePadding="20dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/order_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="0"
+        android:textSize="26sp"/>
+
+    <LinearLayout
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/order_text"
+        android:orientation="vertical">
+
+        <TextView
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginRight="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="大标题大标题大标题大标题大标题大标题大标题大标题"
+            android:textSize="22sp"
+            android:textColor="#000000"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="14.4万"
+                android:drawableLeft="@mipmap/play_info_icon"
+                android:drawablePadding="4dp"
+                android:textColor="#979797"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:drawablePadding="4dp"
+                android:drawableLeft="@mipmap/ic_sound"
+                android:text="05:23"
+                android:textColor="#979797"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:overScrollMode="never"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2020-09-09"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_centerVertical="true"
+        />
+
+
+</RelativeLayout>
