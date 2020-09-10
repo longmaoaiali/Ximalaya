@@ -23,9 +23,10 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/detail_item_title"
             android:maxLines="1"
             android:ellipsize="end"
-            android:layout_marginRight="100dp"
+            android:layout_marginRight="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="大标题大标题大标题大标题大标题大标题大标题大标题"
@@ -39,6 +40,7 @@
             android:layout_marginTop="8dp">
 
             <TextView
+                android:id="@+id/detail_item_play_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="14.4万"
@@ -47,6 +49,7 @@
                 android:textColor="#979797"/>
 
             <TextView
+                android:id="@+id/detail_item_play_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -60,13 +63,15 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/detail_item_update_time"
         android:overScrollMode="never"
+        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2020-09-09"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
-        android:layout_centerVertical="true"
+        android:layout_marginBottom="10dp"
         />
 
 

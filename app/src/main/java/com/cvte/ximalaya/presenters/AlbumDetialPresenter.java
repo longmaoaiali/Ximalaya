@@ -72,10 +72,18 @@ public class AlbumDetialPresenter implements IAlbumDetialPresenter{
             @Override
             public void onError(int i, String s) {
                 LogUtil.d(TAG,"errorCode = "+i+" errorMsg = "+s);
+                handlerError(i,s);
+            
             }
         });
 
 
+    }
+
+    private void handlerError(int errorCode, String errorMsg) {
+        for (IAlbumDetailViewCallback callback : mCallbacks) {
+            callback.onNetworkError(errorCode,errorMsg);
+        }
     }
 
     private void handlerAlbumDetailResult(List<Track> tracks) {

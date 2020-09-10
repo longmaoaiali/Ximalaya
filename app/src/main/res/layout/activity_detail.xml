@@ -113,14 +113,16 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/album_detail_list"
+    <FrameLayout
+        android:id="@+id/detail_list_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/play_control_container">
 
 
-    </android.support.v7.widget.RecyclerView>
+
+
+    </FrameLayout>
 
 
 </RelativeLayout>

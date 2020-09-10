@@ -15,4 +15,7 @@ public interface IAlbumDetailViewCallback {
 
     /*将album传给UI*/
     void onAlbumLoaded(Album album);
+
+    /*网络错误*/
+    void onNetworkError(int errorCode, String errorMsg);
 }
