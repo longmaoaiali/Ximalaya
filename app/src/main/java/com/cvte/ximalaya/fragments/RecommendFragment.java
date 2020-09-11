@@ -2,7 +2,6 @@ package com.cvte.ximalaya.fragments;
 
 import android.content.Intent;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,20 +15,13 @@ import com.cvte.ximalaya.base.BaseFragment;
 import com.cvte.ximalaya.interfaces.IRecommendViewCallback;
 import com.cvte.ximalaya.presenters.AlbumDetialPresenter;
 import com.cvte.ximalaya.presenters.RecommendPresenter;
-import com.cvte.ximalaya.utils.Constants;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.UILoader;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
-import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by user on 2020/9/2.
@@ -150,7 +142,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         super.onDestroyView();
         //取消回调接口的注册
         if (mRecommendPresenter != null) {
-            mRecommendPresenter.unRegisterViewCallback(this);
+            mRecommendPresenter.unregisterViewCallback (this);
         }
     }
 

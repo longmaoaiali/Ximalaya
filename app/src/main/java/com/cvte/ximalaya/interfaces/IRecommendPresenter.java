@@ -1,11 +1,13 @@
 package com.cvte.ximalaya.interfaces;
 
+import com.cvte.ximalaya.base.IBasePresenter;
+
 /**
  * Created by user on 2020/9/4.
  */
 
 /*逻辑层的接口*/
-public interface IRecommendPresenter {
+public interface IRecommendPresenter extends IBasePresenter<IRecommendViewCallback>{
 
     /*获得推荐内容*/
     void getRecommendList();
@@ -15,11 +17,6 @@ public interface IRecommendPresenter {
 
     /*加载更多*/
     void loadMore();
-
-    /*注册回调的方法*/
-    void registerViewCallback(IRecommendViewCallback callback);
-    void unRegisterViewCallback(IRecommendViewCallback callback);
-
 
 
 }

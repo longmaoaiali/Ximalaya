@@ -22,6 +22,7 @@ import com.cvte.ximalaya.adapters.DetailListAdapter;
 import com.cvte.ximalaya.base.BaseActivity;
 import com.cvte.ximalaya.interfaces.IAlbumDetailViewCallback;
 import com.cvte.ximalaya.presenters.AlbumDetialPresenter;
+import com.cvte.ximalaya.presenters.PlayerPresenter;
 import com.cvte.ximalaya.utils.ImageBlur;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.UILoader;
@@ -193,7 +194,11 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     @Override
-    public void onItemClick() {
+    public void onItemClick(List<Track> detailData, int position) {
+        //先设置播放数据
+        PlayerPresenter playerPresenter = PlayerPresenter.getInstance();
+        playerPresenter.setPlayerList(detailData,position);
+
         /*跳转到播放器*/
         //TODO:跳转到播放器
         Intent intent = new Intent(this,PlayerActivity.class);

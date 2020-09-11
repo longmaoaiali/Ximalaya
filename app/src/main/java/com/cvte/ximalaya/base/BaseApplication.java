@@ -1,11 +1,13 @@
 package com.cvte.ximalaya.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 
 import com.cvte.ximalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
+import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 
 /**
  * Created by user on 2020/9/1.
@@ -14,6 +16,7 @@ import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 public class BaseApplication extends Application{
 
     private static Handler sHandler = null;
+    private static Context sContext = null;
 
     @Override
     public void onCreate() {
@@ -34,7 +37,15 @@ public class BaseApplication extends Application{
 
         //开发时时 这里选择true,将log开放
         LogUtil.init(this.getPackageName(), true);
+        //初始化播放器
+        XmPlayerManager.getInstance(this).init();
+
         sHandler = new Handler();
+        sContext = getBaseContext();
+    }
+
+    public static Context getAppContext(){
+        return sContext;
     }
 
     public static Handler getHandler() {

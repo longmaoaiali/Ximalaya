@@ -1,6 +1,5 @@
 package com.cvte.ximalaya.adapters;
 
-import android.support.v7.widget.ActivityChooserView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +58,8 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
             public void onClick(View v) {
                 Toast.makeText(v.getContext(),"you click "+position+" item",Toast.LENGTH_SHORT).show();
                 if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick();
+                    //点击Item时需要传入数据
+                    mItemClickListener.onItemClick(mDetailData,position);
                 }
             }
         });
@@ -93,6 +93,6 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     }
 
     public interface ItemClickListener{
-        void onItemClick();
+        void onItemClick(List<Track> detailData, int position);
     }
 }
