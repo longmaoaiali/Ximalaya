@@ -1,7 +1,5 @@
 package com.cvte.ximalaya.interfaces;
 
-import android.os.Trace;
-
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -22,14 +20,19 @@ public interface IPlayerCallback  {
     void onPlayError();
 
     //播放列表
-    void onListLoaded(List<Trace> list);
+    void onListLoaded(List<Track> list);
     void onPlayModeChange(XmPlayListControl.PlayMode playMode);
 
-    void onPlayProgressChange(long currentProgress,long total);
+    void onPlayProgressChange(int currentProgress,int total);
 
     //广告加载与完成
     void onAdLoading();
     void onAdLoadFinshed();
+
+
+    //void onTrackTitleUpdate(String title);
+
+    void onTrackUpdate(Track track);
 
 
 
