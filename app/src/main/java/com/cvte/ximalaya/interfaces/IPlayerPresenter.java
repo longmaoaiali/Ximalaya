@@ -30,7 +30,7 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerCallback> {
     void getPlayList();
 
     /*根据节目列表位置进行播放*/
-    void platByIndex(int index);
+    void playByIndex(int index);
 
     /*设置播放进度*/
     void seekTo(int progress);

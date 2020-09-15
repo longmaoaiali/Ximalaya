@@ -32,7 +32,7 @@ public interface IPlayerCallback  {
 
     //void onTrackTitleUpdate(String title);
 
-    void onTrackUpdate(Track track);
+    void onTrackUpdate(Track track,int index);
 
 
 

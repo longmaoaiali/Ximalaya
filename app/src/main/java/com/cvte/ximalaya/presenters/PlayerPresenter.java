@@ -30,6 +30,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private static final String TAG = "PlayerPresenter";
     private List<IPlayerCallback> mIPlayerCallbackList = new ArrayList<>();
     private Track mCurrentTrack;
+    private int mCurrentIndex = 0;
 
     private PlayerPresenter(){
         mPlayerManager = XmPlayerManager.getInstance(BaseApplication.getAppContext());
@@ -56,6 +57,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
             isPlayerListSet = true;
             mPlayerManager.setPlayList(tracks,playerIndex);
             mCurrentTrack = tracks.get(playerIndex);
+            mCurrentIndex = playerIndex;
             //mTrackTitle = track.getTrackTitle();
         }
     }
@@ -63,7 +65,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     /*回调都是Presenter回调显示UI的*/
     @Override
     public void registerViewCallback(IPlayerCallback iPlayerCallback) {
-        iPlayerCallback.onTrackUpdate(mCurrentTrack);
+        iPlayerCallback.onTrackUpdate(mCurrentTrack,mCurrentIndex);
         if (!mIPlayerCallbackList.contains(iPlayerCallback)) {
             mIPlayerCallbackList.add(iPlayerCallback);
         }
@@ -79,7 +81,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     public void play() {
         LogUtil.d(TAG,"isPlayerListSet--> "+isPlayerListSet);
         if (isPlayerListSet) {
-            Log.d(TAG,Log.getStackTraceString(new Throwable()));
+            int playerStatus = mPlayerManager.getPlayerStatus();
+            LogUtil.d(TAG,"playerStatus --> "+playerStatus);
+            //Log.d(TAG,Log.getStackTraceString(new Throwable()));
             //LogUtil.d(TAG.);
             mPlayerManager.play();
         }
@@ -128,8 +132,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     @Override
-    public void platByIndex(int index) {
-
+    public void playByIndex(int index) {
+        if (mPlayerManager != null) {
+            mPlayerManager.play(index);
+        }
     }
 
     @Override
@@ -212,6 +218,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onSoundPrepared() {
         LogUtil.d(TAG,"onSoundPrepared");
+        LogUtil.d(TAG,"current state --> "+mPlayerManager.getPlayerStatus());
     }
 
     //切歌
@@ -228,15 +235,17 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 //            LogUtil.d(TAG,"title == > " + currentTrack.getTrackTitle());
 //        }
 
+        mCurrentIndex = mPlayerManager.getCurrentIndex();
         if (curModel instanceof Track) {
             Track currentTrack = (Track) curModel;
             //LogUtil.d(TAG,"currentTrack title is --> " + currentTrack.getTrackTitle());
 
-            for (IPlayerCallback iPlayerCallback : mIPlayerCallbackList) {
-                iPlayerCallback.onTrackUpdate(mCurrentTrack);
+            if (mIPlayerCallbackList != null) {
+                for (IPlayerCallback iPlayerCallback : mIPlayerCallbackList) {
+                    iPlayerCallback.onTrackUpdate(mCurrentTrack,mCurrentIndex);
+                }
             }
         }
-
 
     }
 
