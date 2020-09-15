@@ -1,8 +1,5 @@
 package com.cvte.ximalaya.presenters;
 
-import android.net.LinkAddress;
-import android.util.Log;
-
 import com.cvte.ximalaya.base.BaseApplication;
 import com.cvte.ximalaya.interfaces.IPlayerCallback;
 import com.cvte.ximalaya.interfaces.IPlayerPresenter;
@@ -13,7 +10,9 @@ import com.ximalaya.ting.android.opensdk.model.advertis.AdvertisList;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 import com.ximalaya.ting.android.opensdk.player.advertis.IXmAdsStatusListener;
+import com.ximalaya.ting.android.opensdk.player.constants.PlayerConstants;
 import com.ximalaya.ting.android.opensdk.player.service.IXmPlayerStatusListener;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 import java.util.ArrayList;
@@ -116,8 +115,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     }
 
     @Override
-    public void switchPlayMode(int mode) {
-
+    public void switchPlayMode(XmPlayListControl.PlayMode mode) {
+        if (mPlayerManager != null) {
+            mPlayerManager.setPlayMode(mode);
+        }
     }
 
     @Override
@@ -219,6 +220,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     public void onSoundPrepared() {
         LogUtil.d(TAG,"onSoundPrepared");
         LogUtil.d(TAG,"current state --> "+mPlayerManager.getPlayerStatus());
+        //播放器准备好了再开始play
+        if (mPlayerManager.getPlayerStatus() == PlayerConstants.STATE_PREPARED) {
+            mPlayerManager.play();
+        }
     }
 
     //切歌

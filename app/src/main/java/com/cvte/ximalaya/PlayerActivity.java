@@ -18,7 +18,11 @@ import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
 
 /**
  * Created by user on 2020/9/10.
@@ -43,6 +47,20 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
     private static final String TAG = "PlayerActivity";
     private PlayerTrackPageViewAdapter mPlayerTrackPageViewAdapter;
     private boolean mIsUserSlidePager = false;
+    private ImageView mPlayMode;
+
+    private static Map<XmPlayListControl.PlayMode,XmPlayListControl.PlayMode> sPlayModeMap = new HashMap<>();
+    private XmPlayListControl.PlayMode mCurrentMode=PLAY_MODEL_LIST;
+
+
+    static {
+        /*将上一个与下一个模式分别作为key 与 value*/
+        sPlayModeMap.put(PLAY_MODEL_LIST, XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP);
+        sPlayModeMap.put(XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP, XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM);
+        sPlayModeMap.put(XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM, XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE);
+        sPlayModeMap.put(XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE, XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP);
+        sPlayModeMap.put(XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP, PLAY_MODEL_LIST);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +76,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         mPlayerPresenter.getPlayList();
         initViewListener();
         /*大坑 有的歌曲会出现无法播放 需要等待播放器准备好才能再播放*/
-        startPlay();
+        //startPlay();
     }
 
     @Override
@@ -70,9 +88,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         }
     }
 
-    private void startPlay() {
-        mPlayerPresenter.play();
-    }
+//    private void startPlay() {
+//        mPlayerPresenter.play();
+//    }
 
 
     private void initViewListener() {
@@ -141,6 +159,39 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
                 return false;
             }
         });
+
+        mPlayMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //切换播放模式 TODO:
+                XmPlayListControl.PlayMode  playMode = sPlayModeMap.get(mCurrentMode);
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.switchPlayMode(playMode);
+                    mCurrentMode = playMode;
+                    updatePlayModeImg();
+                }
+            }
+        });
+    }
+
+    private void updatePlayModeImg() {
+        switch (mCurrentMode){
+            case PLAY_MODEL_LIST:
+                mPlayMode.setImageResource(R.drawable.selector_player_mode_list_order);
+                break;
+            case PLAY_MODEL_RANDOM:
+                mPlayMode.setImageResource(R.drawable.selector_player_mode_random);
+                break;
+            case PLAY_MODEL_SINGLE:
+                mPlayMode.setImageResource(R.drawable.selector_player_mode_one_loop);
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                mPlayMode.setImageResource(R.drawable.selector_player_mode_loop);
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                mPlayMode.setImageResource(R.drawable.selector_player_mode_one_loop);
+                break;
+        }
     }
 
     private void initView() {
@@ -159,6 +210,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         //ViewPage显示需要创建适配器，设置适配器
         mPlayerTrackPageViewAdapter = new PlayerTrackPageViewAdapter();
         mTrackPageView.setAdapter(mPlayerTrackPageViewAdapter);
+        mPlayMode = this.findViewById(R.id.player_mode_switch);
 
     }
 
@@ -166,21 +218,21 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
     public void onPlayStart() {
         //开始播放以后将图片换成暂停的图片
         if (mControlBtn != null) {
-            mControlBtn.setImageResource(R.mipmap.stop_normal);
+            mControlBtn.setImageResource(R.drawable.selector_player_stop);
         }
     }
 
     @Override
     public void onPlayStop() {
         if (mControlBtn != null) {
-            mControlBtn.setImageResource(R.mipmap.play_normal);
+            mControlBtn.setImageResource(R.drawable.selector_player_play);
         }
     }
 
     @Override
     public void onPlayPause() {
         if (mControlBtn != null) {
-            mControlBtn.setImageResource(R.mipmap.play_normal);
+            mControlBtn.setImageResource(R.drawable.selector_player_play);
         }
     }
 

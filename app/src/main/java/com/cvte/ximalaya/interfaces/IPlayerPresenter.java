@@ -1,6 +1,7 @@
 package com.cvte.ximalaya.interfaces;
 
 import com.cvte.ximalaya.base.IBasePresenter;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 /**
  * Created by user on 2020/9/11.
@@ -24,7 +25,7 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerCallback> {
     void playNext();
 
     /*切换播放模式*/
-    void switchPlayMode(int mode);
+    void switchPlayMode(XmPlayListControl.PlayMode mode);
 
     /*获取播放列表*/
     void getPlayList();
