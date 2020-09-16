@@ -1,19 +1,28 @@
 package com.cvte.ximalaya;
 
+import android.animation.ValueAnimator;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.cvte.ximalaya.adapters.PlayerTrackPageViewAdapter;
 import com.cvte.ximalaya.base.BaseActivity;
+import com.cvte.ximalaya.base.BaseApplication;
 import com.cvte.ximalaya.interfaces.IPlayerCallback;
 import com.cvte.ximalaya.presenters.PlayerPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
+import com.cvte.ximalaya.views.PlayerPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -62,6 +71,12 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         sPlayModeMap.put(XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP, PLAY_MODEL_LIST);
     }
 
+    private View mPlayListBtn;
+    private PlayerPopWindow mPlayerPopWindow;
+    private ValueAnimator mEnterBgAnimator;
+    private ValueAnimator mExitAnimator;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,13 +85,47 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         //测试一下播放
         mPlayerPresenter = PlayerPresenter.getInstance();
         //playerPresenter.play();
-        mPlayerPresenter.registerViewCallback(this);
+
         initView();
         //界面初始化以后再获取数据
+
+        mPlayerPresenter.registerViewCallback(this);
+
         mPlayerPresenter.getPlayList();
         initViewListener();
+        
+        initBgAnimation();
+        
         /*大坑 有的歌曲会出现无法播放 需要等待播放器准备好才能再播放*/
         //startPlay();
+
+    }
+
+    private void initBgAnimation() {
+        mEnterBgAnimator = ValueAnimator.ofFloat(1.0f,0.7f);
+        mEnterBgAnimator.setDuration(500);
+        mEnterBgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float)animation.getAnimatedValue();
+                //LogUtil.d(TAG,"value --> "+animation.getAnimatedValue());
+                updateBgAlpha(value);
+            }
+        });
+
+
+        //退出动画
+        mExitAnimator = ValueAnimator.ofFloat(0.7f,1.0f);
+        mExitAnimator.setDuration(500);
+        mExitAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float)animation.getAnimatedValue();
+                //LogUtil.d(TAG,"value --> "+animation.getAnimatedValue());
+                updateBgAlpha(value);
+            }
+        });
+
     }
 
     @Override
@@ -167,11 +216,42 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
                 XmPlayListControl.PlayMode  playMode = sPlayModeMap.get(mCurrentMode);
                 if (mPlayerPresenter != null) {
                     mPlayerPresenter.switchPlayMode(playMode);
-                    mCurrentMode = playMode;
-                    updatePlayModeImg();
+                    //mCurrentMode = playMode;
+                    //updatePlayModeImg();
                 }
             }
         });
+
+        mPlayListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:弹出列表 POPWindow实现
+                /*展示播放列表*/
+                mPlayerPopWindow.showAtLocation(v, Gravity.BOTTOM,0,0);
+                //处理背景变灰 修改透明度
+                //updateBgAlpha(0.8f);
+                //背景透明度变化
+                mEnterBgAnimator.start();
+
+            }
+        });
+
+        mPlayerPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                //pop窗体消失以后恢复透明度
+                //updateBgAlpha(1.0f);
+                mExitAnimator.start();
+            }
+        });
+    }
+
+    //更新透明度
+    private void updateBgAlpha(float alpha) {
+        Window window = getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.alpha = alpha;
+        window.setAttributes(attributes);
     }
 
     private void updatePlayModeImg() {
@@ -212,6 +292,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         mTrackPageView.setAdapter(mPlayerTrackPageViewAdapter);
         mPlayMode = this.findViewById(R.id.player_mode_switch);
 
+        mPlayListBtn = this.findViewById(R.id.player_list);
+        mPlayerPopWindow = new PlayerPopWindow();
     }
 
     @Override
@@ -262,7 +344,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
 
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode playMode) {
-
+        mCurrentMode = playMode;
+        updatePlayModeImg();
     }
 
     @Override
