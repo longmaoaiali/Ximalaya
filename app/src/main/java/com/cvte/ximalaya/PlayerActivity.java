@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -181,14 +182,14 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         mPlayerPre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlayerPresenter.playNext();
+                mPlayerPresenter.playPre();
             }
         });
 
         mPlayerNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlayerPresenter.playPre();
+                mPlayerPresenter.playNext();
             }
         });
 
@@ -242,6 +243,16 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
                 //pop窗体消失以后恢复透明度
                 //updateBgAlpha(1.0f);
                 mExitAnimator.start();
+            }
+        });
+
+        mPlayerPopWindow.setPlayListItemClickListener(new PlayerPopWindow.PlayListItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                //说明播放列表的item被点击
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.playByIndex(position);
+                }
             }
         });
     }
@@ -340,6 +351,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
         if (mPlayerTrackPageViewAdapter != null) {
             mPlayerTrackPageViewAdapter.setData(list);
         }
+
+        //TODO: 需要将数据给到节目列表一份
+        if (mPlayerPopWindow != null) {
+            mPlayerPopWindow.setListData(list);
+        }
     }
 
     @Override
@@ -391,14 +407,21 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
 
     @Override
     public void onTrackUpdate(Track track, int index) {
+        LogUtil.d(TAG,"onTrackUpdate update track");
         this.mTrackTitleText = track.getTrackTitle();
         if (mTitleView != null) {
+            LogUtil.d(TAG,"set Sound Title"+mTrackTitleText);
             mTitleView.setText(mTrackTitleText);
         }
         //上下切换歌曲时，需要联动切换图片
         if (mTrackPageView != null) {
             mTrackPageView.setCurrentItem(index,true);
         }
+        //TODO:设置播放列表的当前位置
+        if (mPlayerPopWindow != null) {
+            mPlayerPopWindow.setCurrentPlayPosition(index);
+        }
+
     }
 
 

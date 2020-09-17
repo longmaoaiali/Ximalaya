@@ -32,11 +32,13 @@ public class PlayerTrackPageViewAdapter extends PagerAdapter{
 
         ImageView item = itemView.findViewById(R.id.track_page_item);
         Track track = mData.get(position);
-        String coverUrlLarge =  track.getCoverUrlLarge();
-        if (item != null) {
-            Picasso.get().load(coverUrlLarge).into(item);
+        String coverUrlSmall =  track.getCoverUrlSmall();
+        //图片的URL可能为空
+        LogUtil.d(TAG,"coverUrlSmall is " + coverUrlSmall);
+        if (item != null && !coverUrlSmall.isEmpty()) {
+            Picasso.get().load(coverUrlSmall).into(item);
         }else{
-            LogUtil.d(TAG,"ImageView is null");
+            LogUtil.d(TAG,"ImageView or coverUrlLarge is null ");
         }
         return itemView;
     }

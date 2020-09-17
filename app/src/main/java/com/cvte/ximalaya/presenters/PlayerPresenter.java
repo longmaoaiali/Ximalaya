@@ -256,9 +256,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onSoundSwitch(PlayableModel lastModel, PlayableModel curModel) {
         LogUtil.d(TAG,"onSoundSwitch");
-        if (curModel != null) {
-            LogUtil.d(TAG,"current Model is -->" + curModel.getKind());
-        }
+//        if (curModel != null) {
+//            LogUtil.d(TAG,"current Model is -->" + curModel.getKind());
+//        }
 
         /*不推荐直接对比字段*/
 //        if ("track".equals(curModel.getKind())) {
@@ -268,8 +268,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
         mCurrentIndex = mPlayerManager.getCurrentIndex();
         if (curModel instanceof Track) {
-            Track currentTrack = (Track) curModel;
-            //LogUtil.d(TAG,"currentTrack title is --> " + currentTrack.getTrackTitle());
+            Track mCurrentTrack = (Track) curModel;
+            LogUtil.d(TAG,"currentTrack title is --> " + mCurrentTrack.getTrackTitle());
 
             if (mIPlayerCallbackList != null) {
                 for (IPlayerCallback iPlayerCallback : mIPlayerCallbackList) {
