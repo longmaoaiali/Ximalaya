@@ -1,5 +1,6 @@
 package com.cvte.ximalaya.adapters;
 
+import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.cvte.ximalaya.R;
 import com.cvte.ximalaya.base.BaseApplication;
+import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.PlayerPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
@@ -24,6 +26,7 @@ public class PlayListAdatpter extends RecyclerView.Adapter<PlayListAdatpter.Inne
     private List<Track> mDatas = new ArrayList<>();
     private int mPlayingIndex = 0;
     private PlayerPopWindow.PlayListItemClickListener mItemListener = null;
+    private static final String TAG="PlayListAdatpter";
 
     @Override
     public InnerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -68,7 +71,9 @@ public class PlayListAdatpter extends RecyclerView.Adapter<PlayListAdatpter.Inne
     }
 
     public void setCurrentPlayPosition(int position) {
+        LogUtil.d(TAG,"setCurrentPlayPosition --> "+position);
         mPlayingIndex = position;
+        notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(PlayerPopWindow.PlayListItemClickListener listener) {
