@@ -188,9 +188,12 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onRetryClick() {
+        LogUtil.d(TAG,"Network error onRetryClick...");
         //网络不佳的重试按钮
         mAlbumDetialPresenter.getAlbumDetail((int)mCurrentId, mCurrentPage);
-
+        if (mUiLoader != null) {
+            mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
+        }
     }
 
     @Override
