@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cvte.ximalaya.adapters.PlayerTrackPageViewAdapter;
 import com.cvte.ximalaya.base.BaseActivity;
@@ -76,6 +77,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
     private PlayerPopWindow mPlayerPopWindow;
     private ValueAnimator mEnterBgAnimator;
     private ValueAnimator mExitAnimator;
+    private boolean playListOrder = true;
 
 
     @Override
@@ -255,6 +257,31 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
                 }
             }
         });
+
+
+        mPlayerPopWindow.setPlayActionListener(new PlayerPopWindow.PlayActionListener() {
+            @Override
+            public void onPlayModeClick() {
+                XmPlayListControl.PlayMode  playMode = sPlayModeMap.get(mCurrentMode);
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.switchPlayMode(playMode);
+                    //mCurrentMode = playMode;
+                    //updatePlayModeImg();
+                }
+            }
+
+            @Override
+            public void onPlayOrderClick() {
+                Toast.makeText(PlayerActivity.this,"切换列表顺序",Toast.LENGTH_SHORT).show();
+
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.revesePlayList();
+                }
+                //mPlayerPopWindow.updateOrderIcon(playListOrder);
+                //playListOrder = !playListOrder;
+
+            }
+        });
     }
 
     //更新透明度
@@ -361,7 +388,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode playMode) {
         mCurrentMode = playMode;
+
         updatePlayModeImg();
+        //也需要POPWindow里面的icon
+        mPlayerPopWindow.updatePlayModeImg(mCurrentMode);
     }
 
     @Override
@@ -422,6 +452,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallback, Vie
             mPlayerPopWindow.setCurrentPlayPosition(index);
         }
 
+    }
+
+    @Override
+    public void updateListOrder(boolean isReverse) {
+        mPlayerPopWindow.updateOrderIcon(isReverse);
     }
 
 

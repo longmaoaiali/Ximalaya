@@ -7,4 +7,16 @@
         <item>历史</item>
     </string-array>
 
+    <string name="PLAY_MODEL_SINGLE">单曲播放</string>
+    <string name="PLAY_MODEL_SINGLE_LOOP">单曲循环</string>
+    <string name="PLAY_MODEL_LIST">列表播放</string>
+    <string name="PLAY_MODEL_LIST_LOOP">列表循环</string>
+    <string name="PLAY_MODEL_RANDOM">随机播放</string>
+
+    <!--PLAY_MODEL_SINGLE,-->
+    <!--PLAY_MODEL_SINGLE_LOOP,-->
+    <!--PLAY_MODEL_LIST,-->
+    <!--PLAY_MODEL_LIST_LOOP,-->
+    <!--PLAY_MODEL_RANDOM;-->
+
 </resources>

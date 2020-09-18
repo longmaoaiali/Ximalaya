@@ -41,6 +41,7 @@ public class PlayListAdatpter extends RecyclerView.Adapter<PlayListAdatpter.Inne
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //调用PlayerActivity的实现的onItemClick方法
                 mItemListener.onItemClick(position);
             }
         });

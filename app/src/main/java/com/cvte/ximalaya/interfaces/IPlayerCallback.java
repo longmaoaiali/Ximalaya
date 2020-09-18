@@ -34,6 +34,6 @@ public interface IPlayerCallback  {
 
     void onTrackUpdate(Track track,int index);
 
-
+    void updateListOrder(boolean isReverse);
 
 }
