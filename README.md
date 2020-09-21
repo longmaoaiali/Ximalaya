@@ -1,7 +1,8 @@
 # Ximalaya FM Android App 开发记录
 ## 参考资料  
   MagicIndicator https://github.com/hackware1993/MagicIndicator   
-  Gaussian Blur 毛玻璃效果 https://www.sunofbeach.net/a/1180054455828197376
+  Gaussian Blur 毛玻璃效果 https://www.sunofbeach.net/a/1180054455828197376  
+  TwinklingRefreshLayout 框架实现下拉刷新 下拉加载更多的样式 https://github.com/lcodecorex/TwinklingRefreshLayout 
   
 ## 开发日志
   2020:09:01 创建项目，初始化环境，集成XIMALAYA SDK和开源项目MagicIndicator  
@@ -17,5 +18,5 @@
   2020:09:15 实现图片与歌曲切换的联动; 解决播放器未初始化完成就开始播放导致播放失败的问题;实现点击事件的选择器;实现播放模式的切换
   2020:09:16 使用POPWndow实现弹出列表；添加背景透明度渐变的动画效果  
   2020:09:17 使用RecyclerView实现playList,修复Picasso loadUrl为空导致的应用闪退;修复PlayList点击Item之后不更新playList的问题  
-  
+  2020:09:21 详情界面控制播放;使用TwinklingRefreshLayout 框架实现下拉刷新 下拉加载更多的样式 https://github.com/lcodecorex/TwinklingRefreshLayout 
   
