@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:id="@+id/iv_large_cover"
-        android:background="#00ff00"
+        android:background="#ffffff"
         android:scaleType="fitXY"/>
 
     <RelativeLayout
@@ -42,12 +42,13 @@
         <ImageView
             android:id="@+id/detail_play_control"
             android:layout_centerVertical="true"
-            android:layout_width="19dp"
-            android:layout_height="19dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginLeft="10dp"
             android:src="@mipmap/play_black_normal"/>
 
         <TextView
+            android:id="@+id/detail_play_control_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="继续播放"
@@ -81,7 +82,7 @@
         android:layout_width="75dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="-40dp"
-        android:background="#00ffff"
+        android:background="#ffffff"
         android:layout_below="@id/iv_large_cover"
         android:scaleType="fitXY"/>
 
