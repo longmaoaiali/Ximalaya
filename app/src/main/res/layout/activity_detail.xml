@@ -41,17 +41,24 @@
 
         <ImageView
             android:id="@+id/detail_play_control"
-            android:layout_centerVertical="true"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginLeft="10dp"
-            android:src="@mipmap/play_black_normal"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:src="@mipmap/play_black_normal" />
 
         <TextView
             android:id="@+id/detail_play_control_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="继续播放"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:layout_marginRight="100dp"
+            android:text="点击播放"
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:textSize="14dp"

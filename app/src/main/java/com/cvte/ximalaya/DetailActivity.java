@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private final static int DEFAULT_PLAY_INDEX = 0;
     private TwinklingRefreshLayout mTwinklingRefreshLayout;
     private boolean mIsLoaderMore = false;
+    private String mCurrentTrackTitle;
 
 
     @SuppressLint("NewApi")
@@ -98,7 +100,15 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private void updatePlayState(boolean isplay) {
         if (mPlayerControlIcon != null && mPlayerControlText != null) {
             mPlayerControlIcon.setImageResource(isplay? R.drawable.selector_play_control_pause:R.drawable.selector_play_control_play);
-            mPlayerControlText.setText(isplay?R.string.PLAYER_PLAYING:R.string.PLAYER_PAUSING);
+            //mPlayerControlText.setText(isplay?R.string.PLAYER_PLAYING:R.string.PLAYER_PAUSING);
+            //todo:显示播放的标题
+            if (!isplay) {
+                mPlayerControlText.setText(R.string.PLAYER_PAUSING);
+            }else{
+                if (!TextUtils.isEmpty(mCurrentTrackTitle)) {
+                    mPlayerControlText.setText(mCurrentTrackTitle);
+                }
+            }
         }
     }
 
@@ -156,10 +166,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
         mPlayerControlIcon = this.findViewById(R.id.detail_play_control);
         mPlayerControlText = this.findViewById(R.id.detail_play_control_text);
-
-
-
-
+        mPlayerControlText.setSelected(true);
     }
 
     private View createSuccessView(ViewGroup container) {
@@ -388,6 +395,12 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onTrackUpdate(Track track, int index) {
+        if (track != null) {
+            mCurrentTrackTitle = track.getTrackTitle();
+            if (!TextUtils.isEmpty(mCurrentTrackTitle) && mPlayerControlText != null) {
+                mPlayerControlText.setText(mCurrentTrackTitle);
+            }
+        }
 
     }
 

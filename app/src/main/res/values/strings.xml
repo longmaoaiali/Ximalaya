@@ -14,7 +14,7 @@
     <string name="PLAY_MODEL_RANDOM">随机播放</string>
 
     <string name="PLAYER_PLAYING">正在播放</string>
-    <string name="PLAYER_PAUSING">已暂停</string>
+    <string name="PLAYER_PAUSING">点击播放</string>
     <!--PLAY_MODEL_SINGLE,-->
     <!--PLAY_MODEL_SINGLE_LOOP,-->
     <!--PLAY_MODEL_LIST,-->
