@@ -18,4 +18,9 @@ public interface IAlbumDetailViewCallback {
 
     /*网络错误*/
     void onNetworkError(int errorCode, String errorMsg);
+
+    //size>0 表示是否有更多数据被加载
+    void onLoaderMoreFinished(int size);
+
+    void onRefreshFinished(int size);
 }
