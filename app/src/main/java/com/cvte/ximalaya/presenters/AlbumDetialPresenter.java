@@ -25,6 +25,12 @@ import java.util.Map;
 public class AlbumDetialPresenter implements IAlbumDetialPresenter{
     private Album mTargetAlbum;
     private static final String TAG="AlbumDetialPresenter";
+    //当前页与专辑ID
+    private int mCurrentAlbumId = 0;
+    private int mCurrentPageIndex = 0;
+
+    //专辑的List
+    private List<Track> mTracks = new ArrayList<>();
 
     private AlbumDetialPresenter(){}
 
@@ -48,36 +54,55 @@ public class AlbumDetialPresenter implements IAlbumDetialPresenter{
 
     @Override
     public void loadMore() {
-
+        mCurrentPageIndex++;
+        doLoadedMore(true);
     }
 
-    @Override
-    public void getAlbumDetail(int albumId, int page) {
+    private void doLoadedMore(final boolean isLoaderMore){
         /*根据album ID获得专辑详情*/
         Map<String,String> map = new HashMap<String,String>();
-        map.put(DTransferConstants.ALBUM_ID,albumId+"");
+        map.put(DTransferConstants.ALBUM_ID,mCurrentAlbumId+"");
         map.put(DTransferConstants.SORT,"asc");
-        map.put(DTransferConstants.PAGE,page+"");
+        map.put(DTransferConstants.PAGE,mCurrentPageIndex+"");
         CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(@Nullable TrackList trackList) {
                 if (trackList != null) {
                     List<Track> tracks = trackList.getTracks();
-                    LogUtil.d(TAG,"专辑详情 size --> "+tracks.size());
+                    //mTracks.addAll(tracks);
+                    LogUtil.d(TAG,"专辑详情 tracks.size() size --> "+tracks.size());
                     LogUtil.d(TAG,"current thread --> "+Thread.currentThread().getName());
-                    handlerAlbumDetailResult(tracks);
+                    if (isLoaderMore) {
+                        //上拉加载
+                        mTracks.addAll(tracks);
+                    }else{
+                        mTracks.addAll(0,tracks);
+                    }
+
+                    LogUtil.d(TAG,"专辑详情 mTracks.size() size --> "+mTracks.size());
+                    handlerAlbumDetailResult(mTracks);
                 }
             }
 
             @Override
             public void onError(int i, String s) {
+                if (isLoaderMore) {
+                    mCurrentPageIndex--;
+                }
                 LogUtil.d(TAG,"errorCode = "+i+" errorMsg = "+s);
                 handlerError(i,s);
-            
+
             }
         });
+    }
 
-
+    @Override
+    public void getAlbumDetail(int albumId, int page) {
+        mTracks.clear();
+        this.mCurrentAlbumId = albumId;
+        this.mCurrentPageIndex = page;
+        /*根据album ID获得专辑详情*/
+       doLoadedMore(false);
     }
 
     private void handlerError(int errorCode, String errorMsg) {

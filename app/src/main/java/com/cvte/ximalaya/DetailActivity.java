@@ -69,6 +69,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     private final static int DEFAULT_PLAY_INDEX = 0;
     private TwinklingRefreshLayout mTwinklingRefreshLayout;
+    private boolean mIsLoaderMore = false;
 
 
     @SuppressLint("NewApi")
@@ -196,25 +197,35 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             @Override
             public void onRefresh(TwinklingRefreshLayout refreshLayout) {
                 super.onRefresh(refreshLayout);
-                BaseApplication.getHandler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(DetailActivity.this,"下拉刷新",Toast.LENGTH_SHORT).show();
-                        mTwinklingRefreshLayout.onFinishRefresh();
-                    }
-                },2000);
+//                //todo:加载更多内容
+//                if (mAlbumDetialPresenter != null) {
+//                    mAlbumDetialPresenter.loadMore();
+//                    mIsLoaderMore = true;
+//                }
+//                BaseApplication.getHandler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(DetailActivity.this,"下拉刷新",Toast.LENGTH_SHORT).show();
+//                        mTwinklingRefreshLayout.finishRefreshing();
+//                    }
+//                },2000);
             }
 
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 super.onLoadMore(refreshLayout);
-                BaseApplication.getHandler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(DetailActivity.this,"上拉加载更多",Toast.LENGTH_SHORT).show();
-                        mTwinklingRefreshLayout.onFinishLoadMore();
-                    }
-                }, 2000);
+                //todo:加载更多内容
+                if (mAlbumDetialPresenter != null) {
+                    mAlbumDetialPresenter.loadMore();
+                    mIsLoaderMore = true;
+                }
+//                BaseApplication.getHandler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText(DetailActivity.this,"上拉加载更多",Toast.LENGTH_SHORT).show();
+//                        mTwinklingRefreshLayout.finishLoadmore();
+//                    }
+//                }, 2000);
             }
         });
 
@@ -224,6 +235,12 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
+
+        if (mIsLoaderMore) {
+            mTwinklingRefreshLayout.finishLoadmore();
+            mIsLoaderMore = false;
+        }
+
         this.mCurrentTracks = tracks;
         /*查看数据结果，根据结果显示*/
         if (tracks==null || tracks.size()==0) {
