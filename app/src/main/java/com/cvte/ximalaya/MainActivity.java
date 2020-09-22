@@ -11,10 +11,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cvte.ximalaya.adapters.IndicatorAdapter;
 import com.cvte.ximalaya.adapters.MainContentAdapter;
+import com.cvte.ximalaya.interfaces.IPlayerCallback;
+import com.cvte.ximalaya.presenters.PlayerPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
+import com.cvte.ximalaya.views.RoundRectImageView;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import net.lucode.hackware.magicindicator.MagicIndicator;
 import net.lucode.hackware.magicindicator.ViewPagerHelper;
@@ -23,13 +30,18 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigat
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements IPlayerCallback {
 
     private static final String TAG = "MainActivity";
     private static final int sPermissionRequestCode = 1;
     private MagicIndicator mMagicIndicator;
     private ViewPager mViewPager;
     private IndicatorAdapter mIndicatorAdapter;
+    private RoundRectImageView mRoundRectImageView;
+    private TextView mTrackTitle;
+    private TextView mTrackAuthor;
+    private ImageView mSubPlayerControl;
+    private PlayerPresenter mPlayerPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +56,12 @@ public class MainActivity extends FragmentActivity {
 
         initView();
         initEvent();
-//        Map<String,String> map = new HashMap<String,String>();
-//        CommonRequest.getCategories(map, new IDataCallBack<CategoryList>() {
-//            @Override
-//            public void onSuccess(@Nullable CategoryList categoryList) {
-//                List<Category> categories = categoryList.getCategories();
-//                if(categories != null){
-//                    int size = categories.size();
-//                    Log.d(TAG,"categories size --- <"+size);
-//                    for (Category category : categories) {
-//                        Log.d(TAG,"category -->" + category.getCategoryName());
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onError(int i, String s) {
-//                //error code = 604注意检查真机是否有联网
-//                Log.e(TAG,"error code "+i+" error msg --->"+s);
-//            }
-//        });
+        initPresenter();
+    }
+
+    private void initPresenter() {
+        mPlayerPresenter = PlayerPresenter.getInstance();
+        mPlayerPresenter.registerViewCallback(this);
     }
 
     private void initEvent() {
@@ -106,6 +104,13 @@ public class MainActivity extends FragmentActivity {
         /*将indicator与viewPager绑定，其实就是一个viewPager的监听*/
         //实现viewpager 与 indicator一起移动
         ViewPagerHelper.bind(mMagicIndicator,mViewPager);
+
+        //track_cover track_little_title track_author sub_play_control
+        mRoundRectImageView = this.findViewById(R.id.track_cover);
+        mTrackTitle = this.findViewById(R.id.track_little_title);
+        mTrackAuthor = this.findViewById(R.id.track_author);
+        mSubPlayerControl = this.findViewById(R.id.sub_play_control);
+
 
     }
 
@@ -155,5 +160,80 @@ public class MainActivity extends FragmentActivity {
         } else {
             Log.d(TAG,"had requested get all permission");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPlayerPresenter.unregisterViewCallback(this);
+    }
+
+    @Override
+    public void onPlayStart() {
+
+    }
+
+    @Override
+    public void onPlayStop() {
+
+    }
+
+    @Override
+    public void onPlayPause() {
+
+    }
+
+    @Override
+    public void onPlayNext(Track track) {
+
+    }
+
+    @Override
+    public void onPlayPre(Track track) {
+
+    }
+
+    @Override
+    public void onPlayError() {
+
+    }
+
+    @Override
+    public void onListLoaded(List<Track> list) {
+
+    }
+
+    @Override
+    public void onPlayModeChange(XmPlayListControl.PlayMode playMode) {
+
+    }
+
+    @Override
+    public void onPlayProgressChange(int currentProgress, int total) {
+
+    }
+
+    @Override
+    public void onAdLoading() {
+
+    }
+
+    @Override
+    public void onAdLoadFinshed() {
+
+    }
+
+    @Override
+    public void onTrackUpdate(Track track, int index) {
+        //todo：回调设置UI显示
+        if (track != null) {
+            String trackTitle = track.getTrackTitle();
+            LogUtil.d(TAG,"trackTitle is --> "+trackTitle);
+        }
+    }
+
+    @Override
+    public void updateListOrder(boolean isReverse) {
+
     }
 }
