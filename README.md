@@ -19,4 +19,7 @@
   2020:09:16 使用POPWndow实现弹出列表；添加背景透明度渐变的动画效果  
   2020:09:17 使用RecyclerView实现playList,修复Picasso loadUrl为空导致的应用闪退;修复PlayList点击Item之后不更新playList的问题  
   2020:09:21 详情界面控制播放;使用TwinklingRefreshLayout 框架实现下拉刷新 下拉加载更多的样式 https://github.com/lcodecorex/TwinklingRefreshLayout 
+  2020:09:22 实现上拉加载更多 下拉刷新List 的回弹效果; 实现mainActivity的播放控制UI   
+  2020:09:24 实现mainActivity的播放控制的逻辑;重构ximalaya数据获取的方式  
+  
   
