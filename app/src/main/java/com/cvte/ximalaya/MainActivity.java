@@ -1,6 +1,7 @@
 package com.cvte.ximalaya;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,8 +20,11 @@ import com.cvte.ximalaya.adapters.IndicatorAdapter;
 import com.cvte.ximalaya.adapters.MainContentAdapter;
 import com.cvte.ximalaya.interfaces.IPlayerCallback;
 import com.cvte.ximalaya.presenters.PlayerPresenter;
+import com.cvte.ximalaya.presenters.RecommendPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.RoundRectImageView;
+import com.squareup.picasso.Picasso;
+import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -42,6 +47,7 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
     private TextView mTrackAuthor;
     private ImageView mSubPlayerControl;
     private PlayerPresenter mPlayerPresenter;
+    private View mMainPLayControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,50 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
                 }
             }
         });
+
+
+        mSubPlayerControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPlayerPresenter != null) {
+                    boolean hasPlayList = mPlayerPresenter.hasPlayList();
+                    if (!hasPlayList) {
+                        //没有设置播放列表则播放推荐的第一个专辑
+                        playFirstRecommend();
+                    }else {
+                        if (mPlayerPresenter.isplay()) {
+                            mPlayerPresenter.pause();
+                        }else{
+                            mPlayerPresenter.play();
+                        }
+                    }
+
+
+                }
+            }
+        });
+
+        mMainPLayControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //跳转到播放器界面
+                boolean hasPlayList = mPlayerPresenter.hasPlayList();
+                if (!hasPlayList) {
+                    playFirstRecommend();
+                }
+                //跳转播放器界面
+                startActivity(new Intent(MainActivity.this,PlayerActivity.class));
+            }
+        });
+    }
+
+    private void playFirstRecommend() {
+        List<Album> recommendList = RecommendPresenter.getInstance().getCurrentRecommend();
+        if (recommendList != null && recommendList.size()>0) {
+            Album album = recommendList.get(0);
+            long AlbumId = album.getId();
+            mPlayerPresenter.playByAlbumId(AlbumId);
+        }
     }
 
     private void initView() {
@@ -108,8 +158,11 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
         //track_cover track_little_title track_author sub_play_control
         mRoundRectImageView = this.findViewById(R.id.track_cover);
         mTrackTitle = this.findViewById(R.id.track_little_title);
+        mTrackTitle.setSelected(true);
         mTrackAuthor = this.findViewById(R.id.track_author);
         mSubPlayerControl = this.findViewById(R.id.sub_play_control);
+
+        mMainPLayControl = this.findViewById(R.id.main_play_control);
 
 
     }
@@ -170,17 +223,23 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
 
     @Override
     public void onPlayStart() {
+        updatePlayControl(true);
+    }
 
+    private void updatePlayControl(boolean isPLaying){
+        if (mSubPlayerControl != null) {
+            mSubPlayerControl.setImageResource(isPLaying?R.drawable.selector_player_play:R.drawable.selector_player_stop);
+        }
     }
 
     @Override
     public void onPlayStop() {
-
+        updatePlayControl(false);
     }
 
     @Override
     public void onPlayPause() {
-
+        updatePlayControl(false);
     }
 
     @Override
@@ -225,9 +284,27 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
 
     @Override
     public void onTrackUpdate(Track track, int index) {
+        if (track == null) {
+            LogUtil.d(TAG,"onTrackUpdate track is null");
+            return;
+        }
         //todo：回调设置UI显示
         if (track != null) {
             String trackTitle = track.getTrackTitle();
+            String nickName = track.getAnnouncer().getNickname();
+            String coverUrl = track.getCoverUrlMiddle();
+
+            if (mTrackTitle != null) {
+                mTrackTitle.setText(trackTitle);
+            }
+            if (mTrackAuthor != null) {
+                mTrackAuthor.setText(nickName);
+            }
+
+            if (mRoundRectImageView != null) {
+                Picasso.get().load(coverUrl).into(mRoundRectImageView);
+            }
+
             LogUtil.d(TAG,"trackTitle is --> "+trackTitle);
         }
     }

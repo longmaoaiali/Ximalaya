@@ -2,6 +2,7 @@ package com.cvte.ximalaya.presenters;
 
 import android.support.annotation.Nullable;
 
+import com.cvte.ximalaya.api.XimalayaDataApi;
 import com.cvte.ximalaya.interfaces.IRecommendPresenter;
 import com.cvte.ximalaya.interfaces.IRecommendViewCallback;
 import com.cvte.ximalaya.utils.Constants;
@@ -27,6 +28,7 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     /*callback list*/
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
+    private List<Album> mCurrentRecommend = null;
 
     /*懒汉式单例*/
     private RecommendPresenter(){}
@@ -45,6 +47,10 @@ public class RecommendPresenter implements IRecommendPresenter {
         return sInstance;
     }
 
+    public List<Album> getCurrentRecommend(){
+        return mCurrentRecommend;
+    }
+
     @Override
     public void getRecommendList() {
         getRecommendData();
@@ -53,10 +59,9 @@ public class RecommendPresenter implements IRecommendPresenter {
     private void getRecommendData() {
         LogUtil.d(TAG,"request Recommend Data");
         updateLoadingPicture();
-        //封装map参数，实现回调函数
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMAND_COUNT+"");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
+
+        XimalayaDataApi ximalayaDataApi = XimalayaDataApi.getXimalayaDataApi();
+        ximalayaDataApi.getRecommendList(new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(@Nullable GussLikeAlbumList gussLikeAlbumList) {
                 LogUtil.d(TAG,"thread name --> "+Thread.currentThread().getName());
@@ -78,6 +83,10 @@ public class RecommendPresenter implements IRecommendPresenter {
                 handlerError(i,s);
             }
         });
+        //封装map参数，实现回调函数
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMAND_COUNT+"");
+//        CommonRequest.getGuessLikeAlbum(map, );
     }
 
     private void handlerError(int i, String s) {
@@ -100,6 +109,7 @@ public class RecommendPresenter implements IRecommendPresenter {
                 for (IRecommendViewCallback callback : mCallbacks) {
                     callback.onRecommendListLoaded(albumList);
                 }
+                this.mCurrentRecommend = albumList;
             }
 
         }

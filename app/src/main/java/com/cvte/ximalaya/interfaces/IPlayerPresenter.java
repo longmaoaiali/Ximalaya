@@ -43,4 +43,7 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerCallback> {
     //翻转播放列表排序
     void revesePlayList();
 
+    /*播放的专辑ID*/
+    void playByAlbumId(long id);
+
 }

@@ -48,6 +48,7 @@
     <!--android:overScrollMode="never" 滑动到边框时不会出现颜色边-->
 
     <LinearLayout
+        android:id="@+id/main_play_control"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="#ffffff"
@@ -72,7 +73,7 @@
                 android:id="@+id/track_little_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="大标题"
+                android:text="随便听听"
                 android:textColor="#444444"
                 android:textSize="18sp"
                 android:singleLine="true"
@@ -83,7 +84,7 @@
                 android:id="@+id/track_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="作者"
+                android:text="喜马拉雅"
                 android:textColor="#9d9d9d"
                 android:textSize="14sp"/>
 

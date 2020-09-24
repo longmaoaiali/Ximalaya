@@ -17,6 +17,7 @@ import com.cvte.ximalaya.presenters.AlbumDetialPresenter;
 import com.cvte.ximalaya.presenters.RecommendPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.UILoader;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
@@ -75,6 +76,10 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         * 4.向适配器设置数据
         * */
         mRecommendRv = mRootView.findViewById(R.id.recommend_list);
+
+        TwinklingRefreshLayout twinklingRefreshLayout = mRootView.findViewById(R.id.over_scroll_view);
+        twinklingRefreshLayout.setPureScrollModeOn();
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecommendRv.setLayoutManager(linearLayoutManager);

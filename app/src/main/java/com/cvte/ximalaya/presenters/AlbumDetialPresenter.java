@@ -3,6 +3,7 @@ package com.cvte.ximalaya.presenters;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.cvte.ximalaya.api.XimalayaDataApi;
 import com.cvte.ximalaya.interfaces.IAlbumDetailViewCallback;
 import com.cvte.ximalaya.interfaces.IAlbumDetialPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
@@ -60,11 +61,12 @@ public class AlbumDetialPresenter implements IAlbumDetialPresenter{
 
     private void doLoadedMore(final boolean isLoaderMore){
         /*根据album ID获得专辑详情*/
-        Map<String,String> map = new HashMap<String,String>();
-        map.put(DTransferConstants.ALBUM_ID,mCurrentAlbumId+"");
-        map.put(DTransferConstants.SORT,"asc");
-        map.put(DTransferConstants.PAGE,mCurrentPageIndex+"");
-        CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
+//        Map<String,String> map = new HashMap<String,String>();
+//        map.put(DTransferConstants.ALBUM_ID,mCurrentAlbumId+"");
+//        map.put(DTransferConstants.SORT,"asc");
+//        map.put(DTransferConstants.PAGE,mCurrentPageIndex+"");
+        XimalayaDataApi ximalayaDataApi = XimalayaDataApi.getXimalayaDataApi();
+        ximalayaDataApi.getAlbumDetail(new IDataCallBack<TrackList>() {
             @Override
             public void onSuccess(@Nullable TrackList trackList) {
                 if (trackList != null) {
@@ -94,7 +96,8 @@ public class AlbumDetialPresenter implements IAlbumDetialPresenter{
                 handlerError(i,s);
 
             }
-        });
+        },mCurrentAlbumId,mCurrentPageIndex);
+        //CommonRequest.getTracks(map, n);
     }
 
     private void handlerLoaderMoreResult(int size) {
