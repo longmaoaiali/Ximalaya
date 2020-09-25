@@ -21,5 +21,5 @@
   2020:09:21 详情界面控制播放;使用TwinklingRefreshLayout 框架实现下拉刷新 下拉加载更多的样式 https://github.com/lcodecorex/TwinklingRefreshLayout 
   2020:09:22 实现上拉加载更多 下拉刷新List 的回弹效果; 实现mainActivity的播放控制UI   
   2020:09:24 实现mainActivity的播放控制的逻辑;重构ximalaya数据获取的方式  
-  
+  2020:09:25 添加搜索功能的接口与回调接口; 实现搜索界面的输入框UI  
   
