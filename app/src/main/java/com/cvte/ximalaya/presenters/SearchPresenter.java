@@ -78,12 +78,19 @@ public class SearchPresenter implements ISearchPresenter {
                 List<Album> albums = searchAlbumList.getAlbums();
                 if (albums != null) {
                     LogUtil.d(TAG,"albums size-->"+albums.size());
+                    for (ISearchCallback callback : mCallbacks) {
+                        callback.onSearchResultLoaded(albums);
+                    }
                 }
+
             }
 
             @Override
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG,"errorCode-->"+errorCode+" errorMsg -->" + errorMsg);
+                for (ISearchCallback callback : mCallbacks) {
+                    callback.onError(errorCode,errorMsg);
+                }
             }
         });
     }
@@ -106,12 +113,18 @@ public class SearchPresenter implements ISearchPresenter {
                 if (hotWordList != null) {
                     List<HotWord> hotWords = hotWordList.getHotWordList();
                     LogUtil.d(TAG,"hotWords size--> " + hotWords.size());
+                    for (ISearchCallback callback : mCallbacks) {
+                        callback.onHotWordLoaded(hotWords);
+                    }
                 }
             }
 
             @Override
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG,"getHotWord errorCode-->"+errorCode+" errorMsg -->" + errorMsg);
+                for (ISearchCallback callback : mCallbacks) {
+                    callback.onError(errorCode,errorMsg);
+                }
             }
         });
     }
@@ -130,6 +143,9 @@ public class SearchPresenter implements ISearchPresenter {
             @Override
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG,"getHotWord errorCode-->"+errorCode+" errorMsg -->" + errorMsg);
+                for (ISearchCallback callback : mCallbacks) {
+                    callback.onError(errorCode,errorMsg);
+                }
             }
         });
     }
