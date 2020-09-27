@@ -1,6 +1,7 @@
 package com.cvte.ximalaya;
 
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,8 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
 
+import net.lucode.hackware.magicindicator.buildins.UIUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +48,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private UILoader mUILoader;
     private RecyclerView mResultListView;
     private RecommendListAdapter mRecommendListAdapter;
-    //private FlowTextLayout mFlowTextLayout;
+    private FlowTextLayout mFlowTextLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +82,17 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     }
 
     private void initViewListener() {
+
+        if (mFlowTextLayout != null) {
+            mFlowTextLayout.setClickListener(new FlowTextLayout.ItemClickListener() {
+                @Override
+                public void onItemClick(String text) {
+                    Toast.makeText(SearchActivity.this,text,Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
         if (mUILoader != null) {
             mUILoader.setOnRetryClickListener(new UILoader.OnRetryClickListener() {
                 @Override
@@ -147,12 +161,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             }
         });
 
-//        mFlowTextLayout.setClickListener(new FlowTextLayout.ItemClickListener() {
-//            @Override
-//            public void onItemClick(String text) {
-//                Toast.makeText(SearchActivity.this,text,Toast.LENGTH_SHORT).show();
-//            }
-//        });
+
 
 
     }
@@ -187,6 +196,10 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
      */
     private View createSuccessView() {
         View resultView = LayoutInflater.from(this).inflate(R.layout.search_result_layout,null);
+        //显示热词
+        mFlowTextLayout = resultView.findViewById(R.id.recommend_hot_word_list);
+
+
         mResultListView = resultView.findViewById(R.id.result_list_view);
         //设置布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -197,13 +210,26 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         mResultListView.setAdapter(mRecommendListAdapter);
 
 
-
+        mResultListView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                /*这里是需要像素值 使用magic*/
+                outRect.top = UIUtil.dip2px(view.getContext(),5);
+                outRect.bottom = UIUtil.dip2px(view.getContext(),5);
+                outRect.left = UIUtil.dip2px(view.getContext(),5);
+                outRect.right = UIUtil.dip2px(view.getContext(),5);
+            }
+        });
 
         return resultView;
     }
 
     @Override
     public void onSearchResultLoaded(List<Album> result) {
+        mResultListView.setVisibility(View.VISIBLE);
+        if (mFlowTextLayout != null) {
+            mFlowTextLayout.setVisibility(View.GONE);
+        }
         LogUtil.d(TAG,"liuyu onSearchResultLoaded");
         if (result != null) {
             if (result.size() == 0) {
@@ -222,6 +248,14 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onHotWordLoaded(List<HotWord> hotWordList) {
+        mResultListView.setVisibility(View.GONE);
+        if (mFlowTextLayout != null) {
+            LogUtil.d(TAG,"set mFlowTextLayout VISIBLE");
+            mFlowTextLayout.setVisibility(View.VISIBLE);
+        }
+        if (mUILoader != null) {
+            mUILoader.updateStatus(UILoader.UIStatus.SUCCESS);
+        }
         LogUtil.d(TAG,"hotWorldList-- >"+hotWordList.size());
         List<String> hotwords = new ArrayList<>();
         hotwords.clear();
@@ -229,8 +263,10 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             String serachWord = hotWord.getSearchword();
             hotwords.add(serachWord);
         }
-//        Collections.sort(hotwords);
-//        mFlowTextLayout.setTextContents(hotwords);
+        Collections.sort(hotwords);
+        if (mFlowTextLayout != null) {
+            mFlowTextLayout.setTextContents(hotwords);
+        }
     }
 
     @Override
