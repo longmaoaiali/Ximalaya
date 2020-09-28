@@ -96,7 +96,9 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             albumContentSizeIv.setText(album.getIncludeTrackCount()+"");
             //
             /*图片的加载使用开源框架picasso 将图片加载到ImageView中*/
-            Picasso.get().load(album.getCoverUrlLarge()).into(albumCoverIv);
+            if (album.getCoverUrlLarge() != null && albumCoverIv != null) {
+                Picasso.get().load(album.getCoverUrlLarge()).into(albumCoverIv);
+            }
 
         }
     }

@@ -18,18 +18,33 @@
             android:paddingLeft="5dp"
             android:src="@drawable/selector_search_back"/>
 
-        <EditText
-            android:id="@+id/search_edit"
-            android:textCursorDrawable="@drawable/shape_edit_text_cursor"
-            android:layout_marginLeft="10dp"
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="30dp"
-            android:hint="请输入搜索内容"
-            android:background="@drawable/shape_edit_text_bg"
-            android:maxLines="1"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"/>
+            android:layout_height="30dp">
+
+            <EditText
+                android:id="@+id/search_edit"
+                android:textCursorDrawable="@drawable/shape_edit_text_cursor"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:hint="请输入搜索内容"
+                android:background="@drawable/shape_edit_text_bg"
+                android:maxLines="1"
+                android:paddingRight="40dp"
+                android:paddingLeft="10dp"/>
+
+            <ImageView
+                android:id="@+id/search_input_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/input_delete_icon"/>
+        </RelativeLayout>
+
+
 
         <TextView
             android:id="@+id/search_btn"

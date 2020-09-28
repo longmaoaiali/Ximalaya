@@ -107,6 +107,7 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void getHotWord() {
+        //todo:做一个缓存
         mXimalayaDataApi.getHotWords(new IDataCallBack<HotWordList>() {
             @Override
             public void onSuccess(@Nullable HotWordList hotWordList) {
@@ -137,6 +138,9 @@ public class SearchPresenter implements ISearchPresenter {
                 if (suggestWords != null) {
                     List<QueryResult> keyWordList = suggestWords.getKeyWordList();
                     LogUtil.d(TAG,"keyWordList-->size()"+ keyWordList.size());
+                    for (ISearchCallback callback : mCallbacks) {
+                        callback.onRecommendWordLoaded(keyWordList);
+                    }
                 }
             }
 
