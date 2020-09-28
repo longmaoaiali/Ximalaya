@@ -91,6 +91,16 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     }
 
     private void initViewListener() {
+
+        if (mSearchRecommendAdapter != null) {
+            mSearchRecommendAdapter.setItemClickListener(new SearchRecommendAdapter.ItemClickListener() {
+                @Override
+                public void onItemClick(String keyword) {
+                    LogUtil.d(TAG,"recommend item keyword-->" + keyword);
+                }
+            });
+        }
+
         mDelInputBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -279,6 +289,15 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
         mSearchRecommendAdapter = new SearchRecommendAdapter();
         mSearchRecommendList.setAdapter(mSearchRecommendAdapter);
+        mSearchRecommendList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                outRect.top = UIUtil.dip2px(view.getContext(),2);
+                outRect.bottom = UIUtil.dip2px(view.getContext(),2);
+                outRect.left = UIUtil.dip2px(view.getContext(),5);
+                outRect.right = UIUtil.dip2px(view.getContext(),5);
+            }
+        });
 
         return resultView;
     }

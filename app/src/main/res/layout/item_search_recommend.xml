@@ -2,9 +2,20 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp">
+    android:layout_height="40dp"
+    android:background="@drawable/selector_search_recommend_bg">
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/search_recommend_icon"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:src="@mipmap/search_icon"/>
+
 
     <TextView
+        android:layout_toRightOf="@+id/search_recommend_icon"
         android:id="@+id/search_recommend_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
