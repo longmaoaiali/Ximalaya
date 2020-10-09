@@ -1,6 +1,7 @@
 package com.cvte.ximalaya;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.cvte.ximalaya.adapters.RecommendListAdapter;
 import com.cvte.ximalaya.adapters.SearchRecommendAdapter;
 import com.cvte.ximalaya.base.BaseActivity;
 import com.cvte.ximalaya.interfaces.ISearchCallback;
+import com.cvte.ximalaya.presenters.AlbumDetialPresenter;
 import com.cvte.ximalaya.presenters.SearchPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.FlowTextLayout;
@@ -43,7 +45,7 @@ import java.util.List;
  * Created by user on 2020/9/25.
  */
 
-public class SearchActivity extends BaseActivity implements ISearchCallback {
+public class SearchActivity extends BaseActivity implements ISearchCallback, RecommendListAdapter.OnRecommendItemClickListner {
 
     private View mBackBtn;
     private EditText mInputText;
@@ -60,6 +62,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private RecyclerView mSearchRecommendList;
     private SearchRecommendAdapter mSearchRecommendAdapter;
     private TwinklingRefreshLayout mRefreshLayout;
+
+    private boolean mNeedSuggestWords = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,6 +99,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     private void initViewListener() {
 
+        mRecommendListAdapter.setOnRecommendItemClickListner(this);
+
         mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
@@ -110,6 +116,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             mSearchRecommendAdapter.setItemClickListener(new SearchRecommendAdapter.ItemClickListener() {
                 @Override
                 public void onItemClick(String keyword) {
+                    //只有在输入时会有联想
+                    mNeedSuggestWords = false;
                     LogUtil.d(TAG,"recommend item keyword-->" + keyword);
                     mInputText.setText(keyword);
                     mInputText.setSelection(keyword.length());
@@ -131,6 +139,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
             mFlowTextLayout.setClickListener(new FlowTextLayout.ItemClickListener() {
                 @Override
                 public void onItemClick(String text) {
+                    mNeedSuggestWords = false;
                     //Toast.makeText(SearchActivity.this,text,Toast.LENGTH_SHORT).show();
                     //将热词放入输入框 并发起搜索
                     mInputText.setText(text);
@@ -209,7 +218,11 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
                 }else{
                     mDelInputBtn.setVisibility(View.VISIBLE);
                     //内容不为空触发联想查询
-                    getSuggestWord(s.toString());
+                    if (mNeedSuggestWords) {
+                        getSuggestWord(s.toString());
+                    }else {
+                        mNeedSuggestWords = true;
+                    }
                 }
             }
 
@@ -278,6 +291,8 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         View resultView = LayoutInflater.from(this).inflate(R.layout.search_result_layout,null);
         //控件刷新效果
         mRefreshLayout = resultView.findViewById(R.id.search_result_refresh_layout);
+        //禁止上拉
+        mRefreshLayout.setEnableRefresh(false);
 
 
         //显示热词
@@ -418,4 +433,13 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
         mRefreshLayout.setVisibility(View.GONE);
         mFlowTextLayout.setVisibility(View.GONE);
     }
+
+    @Override
+    public void onItemClick(int cliclPosition, Album album) {
+        AlbumDetialPresenter.getInstance().setAlbumDetail(album);
+        //item被点击了
+        Intent intent = new Intent(this,DetailActivity.class);
+        startActivity(intent);
+    }
+
 }
