@@ -23,6 +23,8 @@ import java.util.List;
 
 public class SearchPresenter implements ISearchPresenter {
 
+    private List<Album> mSearchResult = new ArrayList<>();
+
     /*当前的搜索关键字*/
     private String mCurrentKeyword = null;
 
@@ -66,6 +68,8 @@ public class SearchPresenter implements ISearchPresenter {
 
     @Override
     public void doSearch(String keyword) {
+        mSearchResult.clear();
+        mCurrentPage = 1;
         this.mCurrentKeyword = keyword;
         search(keyword);
 
@@ -76,11 +80,20 @@ public class SearchPresenter implements ISearchPresenter {
             @Override
             public void onSuccess(@Nullable SearchAlbumList searchAlbumList) {
                 List<Album> albums = searchAlbumList.getAlbums();
+                mSearchResult.addAll(albums);
                 if (albums != null) {
                     LogUtil.d(TAG,"albums size-->"+albums.size());
-                    for (ISearchCallback callback : mCallbacks) {
-                        callback.onSearchResultLoaded(albums);
+                    if (mIsLoadMore) {
+                        for (ISearchCallback callback : mCallbacks) {
+                            callback.onLoadMoreResult(mSearchResult,true);
+                        }
+                        mIsLoadMore = false;
+                    }else{
+                        for (ISearchCallback callback : mCallbacks) {
+                            callback.onSearchResultLoaded(mSearchResult);
+                        }
                     }
+
                 }
 
             }
@@ -88,9 +101,19 @@ public class SearchPresenter implements ISearchPresenter {
             @Override
             public void onError(int errorCode, String errorMsg) {
                 LogUtil.d(TAG,"errorCode-->"+errorCode+" errorMsg -->" + errorMsg);
-                for (ISearchCallback callback : mCallbacks) {
-                    callback.onError(errorCode,errorMsg);
+                if (mIsLoadMore) {
+                    for (ISearchCallback callback : mCallbacks) {
+                        callback.onLoadMoreResult(mSearchResult,false);
+                    }
+                    mCurrentPage--;
+                    mIsLoadMore = false;
+                }else {
+                    for (ISearchCallback callback : mCallbacks) {
+                        callback.onError(errorCode,errorMsg);
+                    }
                 }
+
+
             }
         });
     }
@@ -100,8 +123,21 @@ public class SearchPresenter implements ISearchPresenter {
         search(this.mCurrentKeyword);
     }
 
+
+    private boolean mIsLoadMore = false;
     @Override
     public void loadMore() {
+        //判断是否需要加载更多
+        if (mSearchResult.size()<20) {
+            for (ISearchCallback callback : mCallbacks) {
+                callback.onLoadMoreResult(mSearchResult,false);
+            }
+        }else{
+            mIsLoadMore = true;
+            mCurrentPage++;
+            search(mCurrentKeyword);
+        }
+
 
     }
 

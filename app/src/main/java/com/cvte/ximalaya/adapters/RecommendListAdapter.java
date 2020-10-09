@@ -76,6 +76,10 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
         notifyDataSetChanged();
     }
 
+    public int getDatasize() {
+        return mData.size();
+    }
+
     public class InnerHolder extends RecyclerView.ViewHolder {
         public InnerHolder(View itemView) {
             super(itemView);

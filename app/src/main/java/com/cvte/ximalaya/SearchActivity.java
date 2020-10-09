@@ -27,6 +27,8 @@ import com.cvte.ximalaya.presenters.SearchPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.FlowTextLayout;
 import com.cvte.ximalaya.views.UILoader;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.word.HotWord;
 import com.ximalaya.ting.android.opensdk.model.word.QueryResult;
@@ -57,6 +59,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
     private View mDelInputBtn;
     private RecyclerView mSearchRecommendList;
     private SearchRecommendAdapter mSearchRecommendAdapter;
+    private TwinklingRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,11 +95,27 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     private void initViewListener() {
 
+        mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                //todo:onloadermore
+                if (mSearchPresenter != null) {
+                    mSearchPresenter.loadMore();
+                }
+
+            }
+        });
+
         if (mSearchRecommendAdapter != null) {
             mSearchRecommendAdapter.setItemClickListener(new SearchRecommendAdapter.ItemClickListener() {
                 @Override
                 public void onItemClick(String keyword) {
                     LogUtil.d(TAG,"recommend item keyword-->" + keyword);
+                    mInputText.setText(keyword);
+                    mInputText.setSelection(keyword.length());
+                    if (mSearchPresenter != null) {
+                        mSearchPresenter.doSearch(keyword);
+                    }
                 }
             });
         }
@@ -257,6 +276,10 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
      */
     private View createSuccessView() {
         View resultView = LayoutInflater.from(this).inflate(R.layout.search_result_layout,null);
+        //控件刷新效果
+        mRefreshLayout = resultView.findViewById(R.id.search_result_refresh_layout);
+
+
         //显示热词
         mFlowTextLayout = resultView.findViewById(R.id.recommend_hot_word_list);
 
@@ -304,13 +327,17 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onSearchResultLoaded(List<Album> result) {
-        hideAllView();
-        mResultListView.setVisibility(View.VISIBLE);
+        handlerSearchResult(result);
 
         //隐藏键盘
-
         mInm.hideSoftInputFromWindow(mInputText.getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
         LogUtil.d(TAG,"liuyu onSearchResultLoaded");
+
+    }
+
+    private void handlerSearchResult(List<Album> result) {
+        hideAllView();
+        mRefreshLayout.setVisibility(View.VISIBLE);
         if (result != null) {
             if (result.size() == 0) {
                 if (mUILoader != null) {
@@ -349,6 +376,16 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     @Override
     public void onLoadMoreResult(List<Album> result, boolean isOkay) {
+        //处理加载更多的结果
+        if (mRefreshLayout != null) {
+            mRefreshLayout.finishLoadmore();
+        }
+
+        if (isOkay) {
+            handlerSearchResult(result);
+        }else{
+            Toast.makeText(SearchActivity.this,"没有更多内容",Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -378,7 +415,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback {
 
     private void hideAllView(){
         mSearchRecommendList.setVisibility(View.GONE);
-        mResultListView.setVisibility(View.GONE);
+        mRefreshLayout.setVisibility(View.GONE);
         mFlowTextLayout.setVisibility(View.GONE);
     }
 }
