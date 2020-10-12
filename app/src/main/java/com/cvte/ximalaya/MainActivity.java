@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.cvte.ximalaya.adapters.IndicatorAdapter;
 import com.cvte.ximalaya.adapters.MainContentAdapter;
+import com.cvte.ximalaya.data.XimalayaDBHelper;
 import com.cvte.ximalaya.interfaces.IPlayerCallback;
 import com.cvte.ximalaya.presenters.PlayerPresenter;
 import com.cvte.ximalaya.presenters.RecommendPresenter;
@@ -64,6 +65,9 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
         initView();
         initEvent();
         initPresenter();
+        /*DB test*/
+//        XimalayaDBHelper ximalayaDBHelper = new XimalayaDBHelper(this);
+//        ximalayaDBHelper.getWritableDatabase();
     }
 
     private void initPresenter() {
