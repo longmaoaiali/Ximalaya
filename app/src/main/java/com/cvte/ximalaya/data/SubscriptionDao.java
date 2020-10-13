@@ -97,13 +97,13 @@ public class SubscriptionDao  implements ISubDao{
     }
 
     @Override
-    public void listAlbums() {
+    public synchronized void listAlbums() {
         SQLiteDatabase db = null;
         List<Album> result = new ArrayList<>();
         try {
             db = mXimalayaDBHelper.getReadableDatabase();
             db.beginTransaction();
-            Cursor query = db.query(Constants.SUB_TB_NAME,null,null,null,null,null,null);
+            Cursor query = db.query(Constants.SUB_TB_NAME,null,null,null,null,null,"_id desc");
             while (query.moveToNext()) {
                 Album album = new Album();
                 //设置album封面图片
