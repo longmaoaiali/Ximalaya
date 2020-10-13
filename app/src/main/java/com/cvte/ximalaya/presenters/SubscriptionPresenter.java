@@ -1,23 +1,26 @@
 package com.cvte.ximalaya.presenters;
 
+import android.util.Log;
+
 import com.cvte.ximalaya.base.BaseApplication;
 import com.cvte.ximalaya.data.ISubDaoCallback;
 import com.cvte.ximalaya.data.SubscriptionDao;
 import com.cvte.ximalaya.interfaces.ISubscriptionCallback;
 import com.cvte.ximalaya.interfaces.ISubscriptionPresenter;
+import com.cvte.ximalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
-import com.ximalaya.ting.android.opensdk.model.live.schedule.Schedule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 
-import io.reactivex.rxjava3.core.ObservableEmitter;
-import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Created by user on 2020/10/12.
@@ -25,6 +28,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCallback {
 
+    private static final String TAG = "SubscriptionPresenter";
     private final SubscriptionDao mSubscriptionDao;
     private Map<Long,Album> mDatas = new HashMap<>();
     private List<ISubscriptionCallback> mCallbacks = new ArrayList<>();
@@ -39,15 +43,14 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     /*RXJava 实现子线程加载订阅数据*/
     private void LoadListAlbumFromDB(){
-        io.reactivex.rxjava3.core.Observable.create(new ObservableOnSubscribe<Object>() {
-
+        Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
-            public void subscribe(ObservableEmitter<Object> emitter) throws Throwable {
+            public void subscribe(ObservableEmitter<Object> emitter) throws Exception {
+                //只调用，不处理结果
                 if (mSubscriptionDao != null) {
                     mSubscriptionDao.listAlbums();
                 }
             }
-
         }).subscribeOn(Schedulers.io()).subscribe();
     }
 
@@ -55,7 +58,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     private static SubscriptionPresenter sInatnce = null;
 
     public static SubscriptionPresenter getInstance(){
-        if (sInatnce != null) {
+        if (sInatnce == null) {
             synchronized (SubscriptionPresenter.class){
                 sInatnce = new SubscriptionPresenter();
             }
@@ -78,31 +81,26 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     @Override
     public void addSubscription(final Album album) {
         /*RXJava*/
-        io.reactivex.rxjava3.core.Observable.create(new ObservableOnSubscribe<Object>() {
-
+        Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
-            public void subscribe(ObservableEmitter<Object> emitter) throws Throwable {
+            public void subscribe(ObservableEmitter<Object> emitter) throws Exception {
                 if (mSubscriptionDao != null) {
                     mSubscriptionDao.addAlbum(album);
                 }
             }
-
         }).subscribeOn(Schedulers.io()).subscribe();
 
     }
 
     @Override
     public void deleteSubscription(final Album album) {
-        /*RXJava*/
-        io.reactivex.rxjava3.core.Observable.create(new ObservableOnSubscribe<Object>() {
-
+        Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
-            public void subscribe(ObservableEmitter<Object> emitter) throws Throwable {
+            public void subscribe(ObservableEmitter<Object> emitter) throws Exception {
                 if (mSubscriptionDao != null) {
                     mSubscriptionDao.delAlbum(album);
                 }
             }
-
         }).subscribeOn(Schedulers.io()).subscribe();
     }
 
@@ -113,9 +111,15 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     @Override
     public boolean isSub(Album album) {
+        LogUtil.d(TAG,"mDatas size ="+mDatas.size());
+        LogUtil.d(TAG,"album.getId() = "+album.getId());
+        LogUtil.d(TAG,"mDatas.containsKey(album.getId()) = "+mDatas.containsKey(album.getId()));
+
         Album result = mDatas.get(album.getId());
-        //返回true 代表不包含
-        return result==null;
+
+        //返回true 代表已订阅
+        //LogUtil.d(TAG,"isSub --> "+);
+        return result!=null;
 
     }
 
@@ -148,8 +152,10 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     @Override
     public void onSubListLoaded(final List<Album> result) {
         /*读取数据表所有数据结果回调*/
+        mDatas.clear();
         for (Album album : result) {
             //保存albumID 和 album 在HashMap中
+            Log.d(TAG,"mDatas.put album.getId()-->" + album.getId());
             mDatas.put(album.getId(),album);
         }
 

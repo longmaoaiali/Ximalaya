@@ -21,4 +21,8 @@
     <!--PLAY_MODEL_LIST_LOOP,-->
     <!--PLAY_MODEL_RANDOM;-->
 
+    <string name="cancel_sub_tips_text">取消订阅</string>
+    <string name="sub_tips_text">+订阅</string>
+
+
 </resources>

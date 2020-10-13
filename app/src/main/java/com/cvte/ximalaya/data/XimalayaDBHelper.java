@@ -38,10 +38,10 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
         db.execSQL(subTbSql);
 
         //插入数据 测试数据库
-        String insertSQLTest = "insert into subTb(title,description) values('title','description');";
-        for (int i = 0; i < 1000; i++) {
-            db.execSQL(insertSQLTest);
-        }
+//        String insertSQLTest = "insert into subTb(title,description) values('title','description');";
+//        for (int i = 0; i < 1000; i++) {
+//            db.execSQL(insertSQLTest);
+//        }
 
     }
 

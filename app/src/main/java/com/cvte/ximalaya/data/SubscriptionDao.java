@@ -40,6 +40,7 @@ public class SubscriptionDao  implements ISubDao{
 
     @Override
     public void addAlbum(Album album) {
+        boolean isAddSuccess = false;
         SQLiteDatabase db = null;
         try {
             db = mXimalayaDBHelper.getWritableDatabase();
@@ -57,24 +58,22 @@ public class SubscriptionDao  implements ISubDao{
             /*插入数据*/
             db.insert(Constants.SUB_TB_NAME,null,contentValues);
             db.setTransactionSuccessful();
-            if (mcallback != null) {
-                mcallback.onAddResult(true);
-            }
+            isAddSuccess = true;
         } catch (Exception e){
-            if (mcallback != null) {
-                mcallback.onAddResult(false);
-            }
             e.printStackTrace();
         } finally {
             db.endTransaction();
             db.close();
         }
-
-
+        if (mcallback != null) {
+            mcallback.onAddResult(isAddSuccess);
+        }
+        
     }
 
     @Override
     public void delAlbum(Album album) {
+        boolean isDeleteSuccess = false;
         SQLiteDatabase db = null;
         try {
             db = mXimalayaDBHelper.getWritableDatabase();
@@ -84,17 +83,16 @@ public class SubscriptionDao  implements ISubDao{
             int delete = db.delete(Constants.SUB_TB_NAME,Constants.SUB_ALBUMID+"=?",new String[] {album.getId()+""});
             LogUtil.d(TAG,"delete-->" + delete);
             db.setTransactionSuccessful();
-            if (mcallback != null) {
-                mcallback.onDeleteResult(true);
-            }
+            isDeleteSuccess = true;
         } catch (Exception e){
-            if (mcallback != null) {
-                mcallback.onDeleteResult(false);
-            }
             e.printStackTrace();
         } finally {
             db.endTransaction();
             db.close();
+        }
+
+        if (mcallback != null) {
+            mcallback.onDeleteResult(isDeleteSuccess);
         }
     }
 
@@ -135,24 +133,23 @@ public class SubscriptionDao  implements ISubDao{
                 album.setAnnouncer(announcer);
 
                 //设置album封面图片
-                int albumId = query.getInt(query.getColumnIndex(Constants.SUB_ID));
+                int albumId = query.getInt(query.getColumnIndex(Constants.SUB_ALBUMID));
                 album.setId(albumId);
 
                 result.add(album);
             }
             query.close();
             db.setTransactionSuccessful();
-            /*查询的数据放在Album List 将数据通知出去*/
-            if (mcallback != null) {
-                mcallback.onSubListLoaded(result);
-            }
-
 
         } catch (Exception e){
             e.printStackTrace();
         } finally {
             db.endTransaction();
             db.close();
+        }
+        /*查询的数据放在Album List 将数据通知出去*/
+        if (mcallback != null) {
+            mcallback.onSubListLoaded(result);
         }
     }
 }
