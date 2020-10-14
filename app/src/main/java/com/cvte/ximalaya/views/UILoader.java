@@ -121,7 +121,7 @@ import com.cvte.ximalaya.utils.LogUtil;
 
     }
 
-    private View getEmptyView() {
+    protected View getEmptyView() {
         return LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view,this,false);
     }
 

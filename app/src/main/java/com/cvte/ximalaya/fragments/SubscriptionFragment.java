@@ -56,6 +56,12 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
                 protected View getSuccessView(ViewGroup container) {
                     return createSuccessView();
                 }
+
+                @Override
+                protected View getEmptyView() {
+                    //todo：自定义覆盖View
+                    return super.getEmptyView();
+                }
             };
 
             if (mUiLoader.getParent() instanceof ViewGroup) {
