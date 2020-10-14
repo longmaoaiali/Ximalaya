@@ -26,6 +26,7 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     private static final String TAG = "RecommendListAdapter";
     private List<Album> mData = new ArrayList<>();
     private OnRecommendItemClickListner mOnRecommendItemClickListner;
+    private OnRecommendItemLongClickListner mLongClickListener;
 
     @Override
     public InnerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -53,6 +54,17 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
         });
         /*将请求到的数据设置到对应的item中*/
         holder.setData(mData.get(position));
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mLongClickListener != null) {
+                    int cliclPosition = (Integer) v.getTag();
+                    mLongClickListener.onItemLongClick(cliclPosition,mData.get(cliclPosition));
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -117,4 +129,16 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
 
         void onItemClick(int cliclPosition, Album album);
     }
+
+    public void setOnRecommendItemLongClickListner(OnRecommendItemLongClickListner listner){
+        this.mLongClickListener = listner;
+    }
+    
+    public interface OnRecommendItemLongClickListner{
+        //void onItemClick(int position);
+
+        void onItemLongClick(int cliclPosition, Album album);
+    }
+
+
 }

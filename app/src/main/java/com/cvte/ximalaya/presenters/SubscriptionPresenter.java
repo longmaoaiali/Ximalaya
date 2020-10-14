@@ -125,6 +125,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     @Override
     public void onAddResult(final boolean isSuccess) {
+        LoadListAlbumFromDB();
         /*添加数据表数据结果回调*/
         BaseApplication.getHandler().post(new Runnable() {
             @Override
@@ -138,6 +139,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
 
     @Override
     public void onDeleteResult(final boolean isSuccess) {
+        LoadListAlbumFromDB();
         /*删除数据表数据结果回调*/
         BaseApplication.getHandler().post(new Runnable() {
             @Override
