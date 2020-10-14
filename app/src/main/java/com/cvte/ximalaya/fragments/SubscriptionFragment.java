@@ -1,5 +1,6 @@
 package com.cvte.ximalaya.fragments;
 
+import android.app.Application;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.cvte.ximalaya.DetailActivity;
@@ -21,6 +23,7 @@ import com.cvte.ximalaya.presenters.RecommendPresenter;
 import com.cvte.ximalaya.presenters.SubscriptionPresenter;
 import com.cvte.ximalaya.utils.LogUtil;
 import com.cvte.ximalaya.views.ConfirmDialog;
+import com.cvte.ximalaya.views.UILoader;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -40,17 +43,41 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
     private ISubscriptionPresenter mSubscriptionPresenter;
     private RecommendListAdapter mRecommendListAdapter;
     private Album mCurrentAlbum = null;
+    private UILoader mUiLoader;
 
     @Override
     protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
         LogUtil.d(TAG,"SubscriptionFragment --> onSubViewLoaded");
-        View rootView = layoutInflater.inflate(R.layout.fragment_subscription,container,false);
-        TwinklingRefreshLayout refreshLayout = rootView.findViewById(R.id.over_scroll_view);
+        FrameLayout rootView = (FrameLayout)layoutInflater.inflate(R.layout.fragment_subscription,container,false);
+
+        if (mUiLoader == null) {
+            mUiLoader = new UILoader(container.getContext()) {
+                @Override
+                protected View getSuccessView(ViewGroup container) {
+                    return createSuccessView();
+                }
+            };
+
+            if (mUiLoader.getParent() instanceof ViewGroup) {
+                ((ViewGroup) mUiLoader.getParent()).removeView(mUiLoader);
+            }
+            rootView.addView(mUiLoader);
+        }
+
+        return rootView;
+    }
+
+    //mUILoader 创建一个成功的View
+    private View createSuccessView() {
+        //todo createSuccessView
+        View itemView = LayoutInflater.from(BaseApplication.getAppContext()).inflate(R.layout.item_subscription,null);
+
+        TwinklingRefreshLayout refreshLayout = itemView.findViewById(R.id.over_scroll_view);
         refreshLayout.setEnableRefresh(false);
         refreshLayout.setEnableLoadmore(false);
 
-        mSubList = rootView.findViewById(R.id.sub_list);
-        mSubList.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        mSubList = itemView.findViewById(R.id.sub_list);
+        mSubList.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
         mSubList.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
@@ -70,7 +97,11 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         mSubscriptionPresenter = SubscriptionPresenter.getInstance();
         mSubscriptionPresenter.registerViewCallback(this);
         mSubscriptionPresenter.getSubscriptionList();
-        return rootView;
+
+        if (mUiLoader != null) {
+            mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
+        }
+        return itemView;
     }
 
     @Override
@@ -86,6 +117,16 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
 
     @Override
     public void onSubscriptionsLoaded(List<Album> albums) {
+        if (albums.size()==0) {
+            if (mUiLoader != null) {
+                mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+            }
+        }else{
+            if (mUiLoader != null) {
+                mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
+            }
+        }
+
         if (mRecommendListAdapter != null) {
             //Collections.reverse(albums);
             mRecommendListAdapter.setData(albums);
