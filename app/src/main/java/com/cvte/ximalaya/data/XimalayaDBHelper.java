@@ -43,6 +43,16 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
 //            db.execSQL(insertSQLTest);
 //        }
 
+        String historyTbSql = "create table historyTb(" +
+                "_id integer primary key autoincrement," +
+                "trackId integer," +
+                "trackTitle varchar," +
+                "historyCover varchar," +
+                "historyPlayCount integer," +
+                "historyDuration integer," +
+                "historyUpdateTime integer);";
+
+        db.execSQL(historyTbSql);
     }
 
     @Override

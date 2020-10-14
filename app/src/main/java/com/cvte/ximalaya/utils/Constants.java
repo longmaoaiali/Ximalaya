@@ -24,6 +24,17 @@ public class Constants {
     public static final String SUB_AUTHORNAME = "authorName";
     public static final String SUB_ALBUMID = "albumId";
 
+    public static final String HISTORY_TB_NAME = "historyTb";
+    public static final String HISTORY_ID = "_id";
+    public static final String HISTORY_TRACK_ID = "trackId";
+    public static final String HISTORY_TRACK_title = "trackTitle";
+    public static final String HISTORY_PLAY_COUNT = "historyPlayCount";
+    public static final String HISTORY_DURATION = "historyDuration";
+    public static final String HISTORY_UPDATE_TIME = "historyUpdateTime";
+    public static final String HISTORY_COVER = "historyCover";
+
+
+
     /*"create table subTb(" +
                 "_id integer," +
                 "coverUrl varchar," +
