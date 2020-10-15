@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.cvte.ximalaya.base.BaseApplication;
 import com.cvte.ximalaya.utils.Constants;
+import com.cvte.ximalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public class HistoryDao implements IHistoryDao {
 
+    private static final String TAG = "HistoryDao";
     private final XimalayaDBHelper mDhHelper;
     private IHistoryDaoCallback mCallback;
 
@@ -117,12 +119,12 @@ public class HistoryDao implements IHistoryDao {
     @Override
     public synchronized void listHistory() {
         SQLiteDatabase db = null;
+        List<Track> historyList = new ArrayList<>();
         try {
             db = mDhHelper.getWritableDatabase();
             db.beginTransaction();
-            Cursor cursor = db.query(Constants.SUB_TB_NAME,null,null,null,null,null,"_id desc");
+            Cursor cursor = db.query(Constants.HISTORY_TB_NAME,null,null,null,null,null,"_id desc");
 
-            List<Track> historyList = new ArrayList<>();
             while (cursor.moveToNext()) {
                 Track track = new Track();
 
@@ -148,9 +150,7 @@ public class HistoryDao implements IHistoryDao {
                 historyList.add(track);
             }
             db.setTransactionSuccessful();
-            if (mCallback != null) {
-                mCallback.onHistoryLoaded(historyList);
-            }
+            LogUtil.d(TAG,"history DAO size = "+historyList.size());
 
         } catch (Exception e){
             e.printStackTrace();
@@ -158,6 +158,11 @@ public class HistoryDao implements IHistoryDao {
             if (db != null) {
                 db.endTransaction();
                 db.close();
+            }
+            //回调应该都在关闭数据库之后，否则会引起数据库访问冲突
+            if (mCallback != null) {
+                LogUtil.d(TAG,"DAO callback presenter");
+                mCallback.onHistoryLoaded(historyList);
             }
         }
     }

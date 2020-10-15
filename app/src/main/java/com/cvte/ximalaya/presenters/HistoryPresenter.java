@@ -2,6 +2,7 @@ package com.cvte.ximalaya.presenters;
 
 import android.app.ActivityManager;
 import android.database.Observable;
+import android.util.Log;
 
 import com.cvte.ximalaya.base.BaseApplication;
 import com.cvte.ximalaya.data.HistoryDao;
@@ -130,6 +131,7 @@ public class HistoryPresenter implements IHistoryPresenter, IHistoryDaoCallback 
     @Override
     public void onHistoryLoaded(final List<Track> tracks) {
         this.mCurrentHistory = tracks;
+        LogUtil.d(TAG,"onHistoryLoaded notify UI change");
         //通知UI更新数据 目前通过RXjava是在IO子线程
         BaseApplication.getHandler().post(new Runnable() {
             @Override
