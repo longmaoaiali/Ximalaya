@@ -37,6 +37,9 @@ public class HistoryDao implements IHistoryDao {
         boolean isSuccess = false;
         try {
             db = mDhHelper.getWritableDatabase();
+            //添加之前先删除 避免重复
+            db.delete(Constants.HISTORY_TB_NAME,Constants.HISTORY_TRACK_ID+"=?",new String[]{track.getDataId()+""});
+
             db.beginTransaction();
             ContentValues values = new ContentValues();
             values.put(Constants.HISTORY_TRACK_ID,track.getDataId());

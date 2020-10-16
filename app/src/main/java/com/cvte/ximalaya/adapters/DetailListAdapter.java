@@ -24,6 +24,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     private SimpleDateFormat mSimpleDateFormat= new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat mPlayDurationFormat = new SimpleDateFormat("mm:ss");
     private ItemClickListener mItemClickListener = null;
+    private ItemLongClickListener mItemLongClickListener;
 
     @Override
     public InnerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -33,7 +34,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
 
     @Override
     public void onBindViewHolder(InnerHolder holder, final int position) {
-        Track track = mDetailData.get(position);
+        final Track track = mDetailData.get(position);
 
         final View itemVIew = holder.itemView;
         TextView orderTv = itemVIew.findViewById(R.id.order_text);
@@ -61,6 +62,16 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
                     //点击Item时需要传入数据
                     mItemClickListener.onItemClick(mDetailData,position);
                 }
+            }
+        });
+
+        itemVIew.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mItemLongClickListener != null) {
+                    mItemLongClickListener.onItemLongClick(track);
+                }
+                return true;
             }
         });
 
@@ -95,4 +106,13 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     public interface ItemClickListener{
         void onItemClick(List<Track> detailData, int position);
     }
+    
+    public void setItemLongClickListener(ItemLongClickListener listener){
+        this.mItemLongClickListener = listener;
+    }
+    
+    public interface ItemLongClickListener{
+        void onItemLongClick(Track track);
+    }
+    
 }
