@@ -83,6 +83,7 @@ public class MainActivity extends FragmentActivity implements IPlayerCallback {
                 LogUtil.d(TAG,"IndicatorAdapter Listener click index "+index);
                 if (mViewPager != null) {
                     mViewPager.setCurrentItem(index);
+                    //mViewPager.setCurrentItem(index,false);
                 }
             }
         });

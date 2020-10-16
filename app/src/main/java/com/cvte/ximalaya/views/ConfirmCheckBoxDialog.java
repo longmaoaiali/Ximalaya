@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.CheckBox;
 
 import com.cvte.ximalaya.R;
 
@@ -18,6 +19,7 @@ public class ConfirmCheckBoxDialog extends Dialog {
     private View mCancleBtn;
     private View mGiveUpBtn;
     private onDialogListener mDialogListener = null;
+    private CheckBox mCheckBox;
 
     public ConfirmCheckBoxDialog(@NonNull Context context) {
         this(context,0);
@@ -45,6 +47,7 @@ public class ConfirmCheckBoxDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 if (mDialogListener != null) {
+
                     mDialogListener.onCancelSub();
                     dismiss();
                 }
@@ -56,7 +59,8 @@ public class ConfirmCheckBoxDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 if (mDialogListener != null) {
-                    mDialogListener.onGiveUp();
+                    boolean checked = mCheckBox.isChecked();
+                    mDialogListener.onGiveUp(checked);
                     dismiss();
                 }
             }
@@ -68,6 +72,7 @@ public class ConfirmCheckBoxDialog extends Dialog {
     private void initView() {
         mCancleBtn = this.findViewById(R.id.cancel_sub);
         mGiveUpBtn = this.findViewById(R.id.give_up);
+        mCheckBox = this.findViewById(R.id.checkbox_all);
     }
 
     public void setonDialogListener(onDialogListener listener){
@@ -76,7 +81,7 @@ public class ConfirmCheckBoxDialog extends Dialog {
 
     public interface onDialogListener{
         void onCancelSub();
-        void onGiveUp();
+        void onGiveUp(boolean checked);
 
     }
 

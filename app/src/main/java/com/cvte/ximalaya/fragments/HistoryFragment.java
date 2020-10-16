@@ -53,6 +53,8 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback, D
                     return createSuccessView(container);
                 }
 
+                //todo：复写empty UILoader 
+
             };
         } else {
             if(mUiLoader.getParent() instanceof ViewGroup) {
@@ -140,9 +142,13 @@ public class HistoryFragment extends BaseFragment implements IHistoryCallback, D
     }
 
     @Override
-    public void onGiveUp() {
+    public void onGiveUp(boolean checked) {
         if (mHistoryPresenter != null && mCurrentTrack != null) {
-            mHistoryPresenter.delHistory(mCurrentTrack);
+            if (!checked) {
+                mHistoryPresenter.delHistory(mCurrentTrack);
+            }else {
+                mHistoryPresenter.cleanHistory();
+            }
         }
     }
 }
